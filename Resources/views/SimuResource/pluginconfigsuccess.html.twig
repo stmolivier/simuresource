@@ -1,0 +1,37 @@
+{% extends "ClarolineCoreBundle:Administration:layout.html.twig" %}
+
+{% block title %}{{ parent() ~ ' - ' ~ 'packages' | trans({}, 'platform') | striptags | raw }}
+    {{ ' - ' ~ 'cpasimusantesimuresource' | trans({}, 'plugin_description') | striptags | raw }}{% endblock %}
+
+{% block breadcrumb %}
+    {{ macros.breadcrumbs([
+    {
+        'icon': 'icon-cog',
+        'name': 'administration'|trans({}, 'platform'),
+        'href': path('claro_admin_index')
+    },
+    {
+        'name': 'packages'|trans({}, 'platform'),
+        'href': path('claro_admin_open_tool', {'toolName': 'platform_packages'})
+    },
+    {
+        'name': 'cpasimusantesimuresource'|trans({}, 'plugin_description'),
+        'href': ''
+    }
+    ]) }}
+{% endblock %}
+
+{% block section_content %}
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ 'cpasimusantesimuresource' | trans({}, 'plugin_description') }}</h3>
+    </div>
+    <div class="panel-body">
+        <div class="alert alert-success">
+            <strong>{{ 'operation_done' | trans({}, 'platform') }}</strong> {{ 'cpasimusante_simuresource_plugin_updated' | trans({}, 'resource') }}
+        </div>
+    </div>
+    <div class="panel-footer">
+        <a href="{{ path('claro_admin_open_tool', {'toolName': 'platform_packages'}) }}"
+           class="btn btn-default btn-primary">{{ 'back_to_packages' | trans({}, 'widget') }}</a>
+    </div>
+{% endblock %}

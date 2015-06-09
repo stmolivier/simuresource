@@ -1,0 +1,46 @@
+{% extends "ClarolineCoreBundle:Administration:layout.html.twig" %}
+
+{% block breadcrumb %}
+    {{ macros.breadcrumbs([
+    {
+        'icon': 'icon-cog',
+        'name': 'administration'|trans({}, 'platform'),
+        'href': path('claro_admin_index')
+    },
+    {
+        'name': 'packages'|trans({}, 'platform'),
+        'href': path('claro_admin_open_tool', {'toolName': 'platform_packages'})
+    },
+    {
+        'name': 'cpasimusantesimuresource'|trans({}, 'plugin_description'),
+        'href': ''
+    }
+    ]) }}
+{% endblock %}
+
+{% block section_content %}
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ 'cpasimusantesimuresource' | trans({}, 'plugin_description') }}</h3>
+    </div>
+    <form action="{{ path('cpasimusante_simuresource_pluginconfig_update') }}" method="POST">
+        <div class="panel-body">
+            {{ form_errors(form) }}
+            <div class="row">
+                <label for="link" class="control-label col-md-3 required">
+                    {{ 'cpasimusante_simuresourcebundle_pluginconfig_param'|trans({}, 'tools') }}:
+                </label>
+
+                <div class="col-md-9">
+                    {{ form_widget(form.param) }}
+                </div>
+            </div>
+            {{ form_rest(form) }}
+        </div>
+        <div class="panel-footer">
+            <input class="btn btn-success" type="submit" id="cpasimusante_simuresource_submit"
+                   value="{{ 'validate'|trans({}, 'tools') }}"/>
+            <a href="{{ path('claro_admin_open_tool', {'toolName': 'platform_packages'}) }}"
+               class="btn btn-default btn-danger">{{ 'cancel'|trans({}, 'platform') }}</a>
+        </div>
+    </form>
+{% endblock %}

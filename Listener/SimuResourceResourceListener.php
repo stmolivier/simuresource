@@ -13,8 +13,10 @@ use Claroline\CoreBundle\Event\DownloadResourceEvent;
 use Claroline\CoreBundle\Event\CustomActionResourceEvent;
 use Claroline\CoreBundle\Event\ExportResourceTemplateEvent;
 use Claroline\CoreBundle\Event\ImportResourceTemplateEvent;
+use Claroline\CoreBundle\Event\PluginOptionsEvent;
 use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
 use CPASimUSante\SimuResourceBundle\Form\SimuResourceType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  *  @DI\Service()
@@ -31,6 +33,32 @@ class SimuResourceResourceListener
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
+    }
+    //-------------------------------
+    // PLUGIN GENERAL SETTINGS
+    //-------------------------------
+
+    /**
+     * @DI\Observe("plugin_options_simuresourcebundle")
+     *
+     * @param PluginOptionsEvent $event
+     */
+    public function onPluginConfigure(PluginOptionsEvent $event)
+    {
+        /*//retrieve the plugin manager with its Service name
+        $pluginManager = $this->container->get("cpasimusante.plugin.manager.pluginconfig");
+        $form = $pluginManager->getPluginconfigForm();
+        //Send the form to the renderer
+        $content = $this->templating->render(
+            'CPASimUSanteSimutoolsBundle:Tools:pluginconfig.html.twig',
+            array(
+                'form' => $form->createView()
+            )
+        );*/
+        $content = "resource";
+        //PluginOptionsEvent require a setResponse()
+        $event->setResponse(new Response($content));
+        $event->stopPropagation();
     }
 
     /**
