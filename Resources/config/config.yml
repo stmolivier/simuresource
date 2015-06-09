@@ -1,0 +1,7 @@
+plugin:
+    has_options: true
+    resources:
+        -
+            class: CPASimUSante\SimuResourceBundle\Entity\SimuResource
+            name: cpasimusante_simuresource
+            is_exportable: true
