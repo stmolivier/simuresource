@@ -55,4 +55,20 @@ class SimuResourceController extends Controller
             'pluginconfig' => $pluginconfig
         );
     }
+
+
+    /**
+     * @EXT\Route("/open/{simuresourceId}", name="cpasimusante_simuresource_resource_open")
+     * template to be displayed
+     * @EXT\Template("CPASimUSanteSimuResourceBundle:SimuResource:resourceopen.html.twig")
+     *
+     * @param integer $simuresourceId id of simuresource
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function openAction($simuresourceId)
+    {
+        return array(
+            'var1' => 'test'
+        );
+    }
 }

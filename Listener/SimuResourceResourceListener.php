@@ -3,7 +3,11 @@
 namespace CPASimUSante\SimuResourceBundle\Listener;
 
 use JMS\DiExtraBundle\Annotation as DI;
+
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 use Claroline\CoreBundle\Event\CopyResourceEvent;
 use Claroline\CoreBundle\Event\CreateFormResourceEvent;
 use Claroline\CoreBundle\Event\CreateResourceEvent;
@@ -14,9 +18,10 @@ use Claroline\CoreBundle\Event\CustomActionResourceEvent;
 use Claroline\CoreBundle\Event\ExportResourceTemplateEvent;
 use Claroline\CoreBundle\Event\ImportResourceTemplateEvent;
 use Claroline\CoreBundle\Event\PluginOptionsEvent;
+
 use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
 use CPASimUSante\SimuResourceBundle\Form\SimuResourceType;
-use Symfony\Component\HttpFoundation\Response;
+
 
 /**
  *  @DI\Service()
@@ -139,6 +144,7 @@ class SimuResourceResourceListener
      */
     public function onDelete(DeleteResourceEvent $event)
     {
+        //In case other entities are dependant from this one, do the stuff before (delete or move ...)
         $event->stopPropagation();
     }
 
@@ -189,7 +195,11 @@ class SimuResourceResourceListener
      */
     public function onOpen(OpenResourceEvent $event)
     {
-        $response = null;
+        //Redirection to the controller.
+        $route = $this->container
+            ->get('router')
+            ->generate('cpasimusante_simuresource_resource_open', array('simuresourceId' => $event->getResource()->getId()));
+        $response = new RedirectResponse($route);
         $event->setResponse($response);
         $event->stopPropagation();
     }
