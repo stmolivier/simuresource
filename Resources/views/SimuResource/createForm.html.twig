@@ -10,8 +10,11 @@
             <h4 class="modal-title">{{ 'create_resource' | trans({}, 'platform') }} ({{ resourceType | trans({}, 'resource') }})</h4>
         </div>
         <div class='modal-body'>
-            {{ form_widget(form) }}
+            {{ form_row(form.field) }}
+            {# <div style="display: none"> allows to set fields, here "otherfield" (in the Listener > onCreateForm() without allowing to show/modify them #}
+        <div style="display: none">
             {{ form_rest(form) }}
+        </div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel'|trans({}, 'platform') }}</button>

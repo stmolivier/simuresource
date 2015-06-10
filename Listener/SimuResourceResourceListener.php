@@ -61,6 +61,10 @@ class SimuResourceResourceListener
         $event->stopPropagation();
     }
 
+    //-------------------------------
+    // RESOURCE SETTINGS
+    //-------------------------------
+
     /**
      * @DI\Observe("create_form_cpasimusante_simuresource")
      *
@@ -70,6 +74,8 @@ class SimuResourceResourceListener
     {
         $form = $this->container->get('form.factory')->create(new SimuResourceType(), new SimuResource());
         $content = $this->container->get('templating')->render(
+            //use this one if i want to override the generic template : 'ClarolineCoreBundle:Resource:createForm.html.twig',
+            //i.e : the generic template displays all fields
             'CPASimUSanteSimuResourceBundle:SimuResource:createForm.html.twig',
             array(
                 'form' => $form->createView(),

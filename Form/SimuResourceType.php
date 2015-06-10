@@ -15,8 +15,13 @@ class SimuResourceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('field')
-            ->add('resourceNode')
+            ->add('field', 'text', array(
+                'label' => 'field'
+            ))
+            ->add('otherfield', 'text', array(
+                'label' => 'otherfield'
+            ))
+            //->add('resourceNode')
         ;
     }
     
@@ -26,7 +31,8 @@ class SimuResourceType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'CPASimUSante\SimuResourceBundle\Entity\SimuResource'
+            'data_class' => 'CPASimUSante\SimuResourceBundle\Entity\SimuResource',
+            'translation_domain' => 'resource'  //where are st the translations for this form
         ));
     }
 

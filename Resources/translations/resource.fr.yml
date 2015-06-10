@@ -1,2 +1,6 @@
 cpasimusante_simuresource: SimuResource
 cpasimusante_simuresource_plugin_updated: "Plugin mis à jour"
+
+#Entity fields
+field: "Champ"
+otherfield: "autre champ"

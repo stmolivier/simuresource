@@ -54,28 +54,4 @@ class SimuResource extends AbstractResource
     {
         return $this->field;
     }
-
-    /**
-     * Set otherfield
-     *
-     * @param integer $otherfield
-     *
-     * @return SimuResource
-     */
-    public function setOtherfield($otherfield)
-    {
-        $this->otherfield = $otherfield;
-
-        return $this;
-    }
-
-    /**
-     * Get otherfield
-     *
-     * @return integer
-     */
-    public function getOtherfield()
-    {
-        return $this->otherfield;
-    }
 }
