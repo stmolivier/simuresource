@@ -1,9 +1,9 @@
 <?php
 
-namespace Claroline\CoreBundle\Repository;
+namespace CPASimUSante\SimuResourceBundle\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
+//use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
 
 class SimuResourceRepository extends EntityRepository
 {

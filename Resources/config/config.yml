@@ -1,12 +1,12 @@
 plugin:
     has_options: true
+    icon: res_simu.png
     resources:
-        -
-            class: CPASimUSante\SimuResourceBundle\Entity\SimuResource
-            name: cpasimusante_simuresource
-            is_exportable: true
-            icon: res_simu.png
-            actions:
-              - name: cpasimusante_simuresource
-              - menu_name: cpasimusante_simuresource_menu
-                is_form: true
+        - class: CPASimUSante\SimuResourceBundle\Entity\SimuResource
+          name: cpasimusante_simuresource
+          is_exportable: true
+          icon: res_simu.png
+          actions:
+            - name: cpasimusante_simuresource
+            - menu_name: cpasimusante_simuresource_menu
+              is_form: true

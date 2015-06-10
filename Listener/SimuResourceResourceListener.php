@@ -64,7 +64,9 @@ class SimuResourceResourceListener
     //-------------------------------
     // RESOURCE SETTINGS
     //-------------------------------
-
+    /**
+     * Display the form when adding a new SimuResource in the Resource section
+     */
     /**
      * @DI\Observe("create_form_cpasimusante_simuresource")
      *
@@ -72,7 +74,10 @@ class SimuResourceResourceListener
      */
     public function onCreateForm(CreateFormResourceEvent $event)
     {
-        $form = $this->container->get('form.factory')->create(new SimuResourceType(), new SimuResource());
+        $resource = new SimuResource();
+        $resource->setOtherfield(44);
+        $form = $this->container->get('form.factory')
+            ->create(new SimuResourceType(), $resource);
         $content = $this->container->get('templating')->render(
             //use this one if i want to override the generic template : 'ClarolineCoreBundle:Resource:createForm.html.twig',
             //i.e : the generic template displays all fields
@@ -85,7 +90,9 @@ class SimuResourceResourceListener
         $event->setResponseContent($content);
         $event->stopPropagation();
     }
-
+    /**
+     * When creation form is sent, what is done ?
+     */
     /**
      * @DI\Observe("create_cpasimusante_simuresource")
      *
@@ -94,15 +101,23 @@ class SimuResourceResourceListener
     public function onCreate(CreateResourceEvent $event)
     {
         $request = $this->container->get('request');
-        $form = $this->container->get('form.factory')->create(new SimuResourceType(), new SimuResource());
+        $form = $this->container->get('form.factory')
+            ->create(new SimuResourceType(), new SimuResource());
+
         $form->handleRequest($request);
-
         if ($form->isValid()) {
-            $published = $form->get('published')->getData();
-            $event->setPublished($published);
-            $event->setResources(array($form->getData()));
-            $event->stopPropagation();
 
+            $em = $this->container->get('doctrine.orm.entity_manager');
+
+            $resource = $form->getData();
+            //the claroline Resource needs a name, we set it with whatever we have
+            $resource->setName($resource->getField());
+
+            $em->persist($resource);
+
+            $event->setResources(array($resource));
+            $event->stopPropagation();
+            //exit the modal
             return;
         }
 
@@ -134,8 +149,24 @@ class SimuResourceResourceListener
      */
     public function onCopy(CopyResourceEvent $event)
     {
-        $newRes = null;
-        $event->setCopy($newRes);
+        $em = $this->container->get('doctrine.orm.entity_manager');
+
+        $resource = $event->getResource();
+        //Retrieve the entity (as an object) from the repository
+        $resourceNow = $em->getRepository('CPASimUSanteSimuResourceBundle:SimuResource')->find($resource->getId());
+
+        //Copy the entity into a new one
+        $resourceNew = new SimuResource();
+        //custom entity fields
+        $resourceNew->setField($resourceNow->getField());
+        $resourceNew->setOtherfield($resourceNow->getOtherfield());
+        //generic entity fields
+        $resourceNew->setName($resourceNow->getName());
+        //Save the entity
+        $em->persist($resourceNew);
+        $em->flush();
+        //Set the copy (Claroline stuff)
+        $event->setCopy($resourceNew);
         $event->stopPropagation();
     }
 
