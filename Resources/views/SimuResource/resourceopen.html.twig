@@ -11,10 +11,24 @@
 {% block section_content %}
 
 <div class="panel-heading">
-    <h3 class="panel-title">blabla </h3>
+    <h3 class="panel-title">{{ 'cpasimusante_simuresource'|trans({}, 'resource') }} : {{ entity.field }}</h3>
 </div>
 <div class="panel-body">
-    blabla {{ var1 }}
+   <p>Otherfield : {{ entity.otherfield }}</p>
+    <p>User : {{ userId }}</p>
+
+    {# BEGIN back to resource list #}
+    {% if isDesktop() %}
+        <a class="btn btn-primary" href="{{ path('claro_desktop_open_tool', { 'toolName': 'resource_manager', 'workspaceId': workspace.getId() }) ~ "#resources/" ~ entity.getResourceNode().getParent().getId() }}">
+            <i class="fa fa-arrow-left"></i> {{ 'back' | trans }}
+        </a>
+    {% else %}
+        <a class="btn btn-primary" href="{{ path('claro_workspace_open_tool', { 'toolName': 'resource_manager', 'workspaceId': workspace.getId() }) ~ "#resources/" ~ entity.getResourceNode().getParent().getId() }}">
+            <i class="fa fa-arrow-left"></i> {{ 'back' | trans }}
+        </a>
+    {% endif %}
+    {# END back to resource list #}
+
 </div>
 
 {% endblock %}

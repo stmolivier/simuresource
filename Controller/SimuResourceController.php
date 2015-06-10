@@ -63,12 +63,30 @@ class SimuResourceController extends Controller
      * @EXT\Template("CPASimUSanteSimuResourceBundle:SimuResource:resourceopen.html.twig")
      *
      * @param integer $simuresourceId id of simuresource
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return array parameters to send to the template
      */
     public function openAction($simuresourceId)
     {
+        $em = $this->getDoctrine()->getManager();
+        //retrieve the resource (object)
+        $resource = $em->getRepository('CPASimUSanteSimuResourceBundle:SimuResource')->find($simuresourceId);
+
+        //retrieve the user
+        $user = $this->container->get('security.token_storage')
+            ->getToken()->getUser();
+        if (is_object($user)) {
+            $uid = $user->getId();
+        } else {
+            $uid = 'anonymous';
+        }
+
+        //retrieve the WS
+        $workspace = $resource->getResourceNode()->getWorkspace();
+
         return array(
-            'var1' => 'test'
+            'entity'        => $resource,
+            'userId'        => $uid,
+            'workspace'     => $workspace
         );
     }
 }
