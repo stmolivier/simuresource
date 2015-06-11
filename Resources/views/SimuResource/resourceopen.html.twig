@@ -6,8 +6,6 @@
 
 {% extends layout %}
 
-{# TODO : find out why breadcrumb isn't displayed #}
-
 {% block section_content %}
 
 <div class="panel-heading">
@@ -19,11 +17,11 @@
 
     {# BEGIN back to resource list #}
     {% if isDesktop() %}
-        <a class="btn btn-primary" href="{{ path('claro_desktop_open_tool', { 'toolName': 'resource_manager', 'workspaceId': workspace.getId() }) ~ "#resources/" ~ entity.getResourceNode().getParent().getId() }}">
+        <a class="btn btn-primary" data-toggle="tooltip" title="{{ 'back'|trans }}" href="{{ path('claro_desktop_open_tool', { 'toolName': 'resource_manager', 'workspaceId': workspace.getId() }) ~ "#resources/" ~ entity.getResourceNode().getParent().getId() }}">
             <i class="fa fa-arrow-left"></i> {{ 'back' | trans }}
         </a>
     {% else %}
-        <a class="btn btn-primary" href="{{ path('claro_workspace_open_tool', { 'toolName': 'resource_manager', 'workspaceId': workspace.getId() }) ~ "#resources/" ~ entity.getResourceNode().getParent().getId() }}">
+        <a class="btn btn-primary" data-toggle="tooltip" title="{{ 'back'|trans }}" href="{{ path('claro_workspace_open_tool', { 'toolName': 'resource_manager', 'workspaceId': workspace.getId() }) ~ "#resources/" ~ entity.getResourceNode().getParent().getId() }}">
             <i class="fa fa-arrow-left"></i> {{ 'back' | trans }}
         </a>
     {% endif %}

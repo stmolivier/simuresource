@@ -2,9 +2,10 @@ plugin:
     has_options: true
     icon: res_simu.png
     resources:
-        - class: CPASimUSante\SimuResourceBundle\Entity\SimuResource
-          name: cpasimusante_simuresource
+        - class: CPASimUSante\SimuResourceBundle\Entity\SimuResource    #the resource main entity
+          name: cpasimusante_simuresource                               # the resource name
           is_exportable: true
+          is_browsable: true
           icon: res_simu.png
           actions:
             - name: cpasimusante_simuresource

@@ -86,7 +86,8 @@ class SimuResourceController extends Controller
         return array(
             'entity'        => $resource,
             'userId'        => $uid,
-            'workspace'     => $workspace
+            'workspace'     => $workspace,
+            '_resource'     => $resource    //mandatory to keep the context and display for instance the breadcrumb in the template
         );
     }
 }
