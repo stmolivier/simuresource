@@ -1,5 +1,5 @@
 plugin:
-    has_options: true
+    has_options: true                                                   #the plugin has option
     icon: res_simu.png
     resources:
         - class: CPASimUSante\SimuResourceBundle\Entity\SimuResource    #the resource main entity
@@ -8,6 +8,6 @@ plugin:
           is_browsable: true
           icon: res_simu.png
           actions:
-            - name: cpasimusante_simuresource
-            - menu_name: cpasimusante_simuresource_menu
-              is_form: true
+            - name: docustomstuff
+              menu_name: docustomstuff
+#              is_form: true

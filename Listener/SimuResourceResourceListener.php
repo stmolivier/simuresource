@@ -203,4 +203,19 @@ class SimuResourceResourceListener
         $event->setResponse($response);
         $event->stopPropagation();
     }
+
+    /**
+     * custom menu item for resource, defined in Resources/config/config.ylm
+     */
+    /**
+     * @DI\Observe("docustomstuff_cpasimusante_simuresource")
+     *
+     * @param OpenResourceEvent $event
+     */
+    public function onDocustomstuff(CustomActionResourceEvent $event)
+    {
+        $response = new Response('custom');
+        $event->setResponse($response);
+        $event->stopPropagation();
+    }
 }
