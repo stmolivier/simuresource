@@ -8,6 +8,6 @@ plugin:
           is_browsable: true
           icon: res_simu.png
           actions:
-            - name: docustomstuff
-              menu_name: docustomstuff
+              - name: dostuff
+                menu_name: dostuff
 #              is_form: true
