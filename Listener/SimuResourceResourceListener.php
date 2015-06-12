@@ -214,7 +214,7 @@ class SimuResourceResourceListener
      */
     public function onDostuff(CustomActionResourceEvent $event)
     {
-        $response = new Response('custom');
+        $response = new Response('Something is done here : save, display...');
         $event->setResponse($response);
         $event->stopPropagation();
     }
