@@ -14,6 +14,7 @@ namespace CPASimUSante\SimuResourceBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Claroline\CoreBundle\Entity\Resource\AbstractResource;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @ORM\Table(name="cpasimusante_simuresource")
@@ -30,6 +31,11 @@ class SimuResource extends AbstractResource
      * @ORM\Column(name="otherfield", type="integer")
      */
     protected $otherfield;
+
+    /**
+     * The file uploaded, but not saved in entity/DB => no ORM\Column
+     */
+    protected $file;
 
     /**
      * Set field
@@ -77,5 +83,14 @@ class SimuResource extends AbstractResource
     public function getOtherfield()
     {
         return $this->otherfield;
+    }
+
+    public function getFile() {
+        return $this->file;
+    }
+
+    public function setFile(UploadedFile $file) {
+        $this->file = $file;
+        return $this;
     }
 }

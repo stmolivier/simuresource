@@ -2,9 +2,10 @@
 
 namespace CPASimUSante\SimuResourceBundle\Installation;
 
-use Claroline\InstalationBundle\Additional\AdditinalInstaller as BaseInstaller;
+use Claroline\InstallationBundle\Additional\AdditionalInstaller as BaseInstaller;
+use CPASimUSante\SimuResourceBundle\Installation\Updater\UpdaterCPA000500;
 
-class AdditionalInsaller extends BaseInstaller
+class AdditionalInstaller extends BaseInstaller
 {
     private $logger;
 
@@ -16,11 +17,35 @@ class AdditionalInsaller extends BaseInstaller
         }
     }
 
+    public function preInstall()
+    {
+        $updater = new Updater\CPAMigrationUpdater($this->container);
+        $updater->setLogger($this->logger);
+        $updater->preInstall();
+    }
+
+    public function postInstall()
+    {
+        $updater = new Updater\CPAMigrationUpdater($this->container);
+        $updater->setLogger($this->logger);
+        $updater->postInstall();
+
+        $updater000500 = new UpdaterCPA000500($this->container->get('doctrine.orm.entity_manager'), $this->container->get('doctrine.dbal.default_connection'));
+        $updater000500->setLogger($this->logger);
+        $updater000500->postUpdate();
+    }
+
     public function preUpdate($currentVersion, $targetVersion)
     {
     }
 
     public function postUpdate($currentVersion, $targetVersion)
     {
+        //needs VERSION.txt @ bundle root
+        if (version_compare($currentVersion, '0.5', '<')) {
+            $updater000500 = new UpdaterCPA000500($this->container->get('doctrine.orm.entity_manager'), $this->container->get('doctrine.dbal.default_connection'));
+            $updater000500->setLogger($this->logger);
+            $updater000500->postUpdate();
+        }
     }
 }
