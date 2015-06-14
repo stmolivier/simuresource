@@ -214,7 +214,12 @@ class SimuResourceResourceListener
      */
     public function onDostuff(CustomActionResourceEvent $event)
     {
-        $response = new Response('Something is done here : save, display...');
+        $content = $this->container->get('templating')->render(
+            'CPASimUSanteSimuResourceBundle:SimuResource:dostuff.html.twig',
+            array(
+            )
+        );
+        $response = new Response($content);
         $event->setResponse($response);
         $event->stopPropagation();
     }
