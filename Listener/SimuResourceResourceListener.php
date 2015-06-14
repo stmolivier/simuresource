@@ -198,12 +198,18 @@ class SimuResourceResourceListener
         //Redirection to the controller.
         $route = $this->container
             ->get('router')
-            ->generate('cpasimusante_simuresource_resource_open', array('simuresourceId' => $event->getResource()->getId()));
+            ->generate('cpasimusante_simuresource_resource_open',
+                array(
+                    'simuresourceId' => $event->getResource()->getId()
+                ));
         $response = new RedirectResponse($route);
         $event->setResponse($response);
         $event->stopPropagation();
     }
 
+    //-------------------------------
+    // CUSTOM SETTINGS
+    //-------------------------------
     /**
      * custom menu item for resource, defined in Resources/config/config.ylm
      */
@@ -217,6 +223,51 @@ class SimuResourceResourceListener
         $content = $this->container->get('templating')->render(
             'CPASimUSanteSimuResourceBundle:SimuResource:dostuff.html.twig',
             array(
+            )
+        );
+        $response = new Response($content);
+        $event->setResponse($response);
+        $event->stopPropagation();
+    }
+
+    /**
+     * Do something in a modal window
+     */
+    /**
+     * @DI\Observe("doinmodal_cpasimusante_simuresource")
+     *
+     * @param CustomActionResourceEvent $event
+     */
+    public function onDoinmodal(CustomActionResourceEvent $event)
+    {
+        $params = array();
+        $params['_controller'] = 'CPASimUSanteSimuResourceBundle:Simuresource:doinmodal';
+        $params['simuresource'] = $event->getResource()->getId();
+        //Create a modal Response with the parameters
+        $subRequest = $this->request->getCurrentRequest()->duplicate(array(), null, $params);
+        //Hand it to the Kernel
+        $response = $this->httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        //fill the event with the content
+        $event->setResponse($response);
+        $event->stopPropagation();
+    }
+
+    /**
+     * Do something in a regular twig template
+     */
+    /**
+     * @DI\Observe("updatesimuresourceinpage_cpasimusante_simuresource")
+     *
+     * @param CustomActionResourceEvent $event
+     */
+    public function onUpdatesimuresourceinpage(CustomActionResourceEvent $event)
+    {
+        $resource =  $event->getResource();
+        $content = $this->container->get('templating')->render(
+            'CPASimUSanteSimuResourceBundle:SimuResource:updatesimuresourceinpage.html.twig',
+            array(
+                '_resource' => $resource,
+                'entity'    => $resource
             )
         );
         $response = new Response($content);

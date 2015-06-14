@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class PluginconfigType extends AbstractType
+class SimuResourceEditType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -15,7 +15,8 @@ class PluginconfigType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('param')
+            ->remove('field')
+            //->add('resourceNode')
         ;
     }
     
@@ -25,7 +26,8 @@ class PluginconfigType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'CPASimUSante\SimuResourceBundle\Entity\Pluginconfig'
+            'data_class' => 'CPASimUSante\SimuResourceBundle\Entity\SimuResource',
+            'translation_domain' => 'resource'  //where are st the translations for this form
         ));
     }
 
@@ -34,6 +36,6 @@ class PluginconfigType extends AbstractType
      */
     public function getName()
     {
-        return 'cpasimusante_simuresourcebundle_pluginconfig';
+        return 'cpasimusante_simuresourcebundle_simuresource_edit';
     }
 }

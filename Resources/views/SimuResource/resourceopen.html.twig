@@ -14,7 +14,8 @@
 <div class="panel-body">
    <p>Otherfield : {{ entity.otherfield }}</p>
     <p>User : {{ userId }}</p>
-
+</div>
+<div class="panel-footer">
     {# BEGIN back to resource list #}
     {% if isDesktop() %}
         <a class="btn btn-primary" data-toggle="tooltip" title="{{ 'back'|trans }}" href="{{ path('claro_desktop_open_tool', { 'toolName': 'resource_manager', 'workspaceId': workspace.getId() }) ~ "#resources/" ~ entity.getResourceNode().getParent().getId() }}">
@@ -24,6 +25,9 @@
         <a class="btn btn-primary" data-toggle="tooltip" title="{{ 'back'|trans }}" href="{{ path('claro_workspace_open_tool', { 'toolName': 'resource_manager', 'workspaceId': workspace.getId() }) ~ "#resources/" ~ entity.getResourceNode().getParent().getId() }}">
             <i class="fa fa-arrow-left"></i> {{ 'back' | trans }}
         </a>
+    {% endif %}
+    {% if isEditGranted %}
+        <a class="btn btn-primary" href="{{ _path('cpasimusante_simuresource_edit_form', {'simuresource': _resource.getId()}) }}" role="button">{{ 'edit' | trans({}, 'platform') }}</a>
     {% endif %}
     {# END back to resource list #}
 

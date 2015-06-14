@@ -10,4 +10,7 @@ plugin:
           actions:
               - name: dostuff
                 menu_name: dostuff
-#              is_form: true
+              - name: doinmodal
+                menu_name: doinmodal
+              - name: updatesimuresourceinpage
+                menu_name: updatesimuresourceinpage

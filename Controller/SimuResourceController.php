@@ -3,14 +3,34 @@
 namespace CPASimUSante\SimuResourceBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\BrowserKit\Response;
+use Symfony\Component\Form\FormFactory; //for doinmodal()
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as EXT;
+use Claroline\CoreBundle\Library\Resource\ResourceCollection;
+
+use CPASimUSante\SimuResourceBundle\Manager\SimuResourceManager;
+use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
+//if we edit the resource data
+use CPASimUSante\SimuResourceBundle\Form\SimuResourceEditType;
+
+
 
 class SimuResourceController extends Controller
 {
+    private $simuresourceManager;
+
+    public function __construct(
+        SimuResourceManager $simuresourceManager
+    )
+    {
+        $this->simuresourceManager = $simuresourceManager;
+    }
+
     /**
      * @EXT\Route("/update", name="cpasimusante_simuresource_pluginconfig_update")
      * @EXT\Method({"GET", "POST"})
-     * the template dor the form
+     * the template for the form
      * @EXT\Template("CPASimUSanteSimuresourceBundle:SimuResource:pluginconfig.html.twig")
      *
      * @param Request $request
@@ -20,23 +40,137 @@ class SimuResourceController extends Controller
     {
         //only admin access
         $this->checkAdmin();
-        //retrieve the plugin config
-        $pluginconfig = $this->pcManager->getPluginconfig();
-
-        try {
-            $pluginconfig = $this->pcManager->processForm($pluginconfig, $request);
-        } catch (InvalidPluginconfigFormException $e) {
-            return array('form' => $e->getForm()->createView());
-        }
+        //retrieve the resource config
+        $resourceconfig = $this->simuresourceManager->getResourceConfig();
+        //process the resource
+        $resourceconfig = $this->simuresourceManager->processForm($resourceconfig, $request);
         //redirect when validated
         $response = $this->forward(
             "CPASimUSanteSimuresourceBundle:Simuresource:success",
             array(
-                'pluginconfig' => $pluginconfig
+                'resourceconfig' => $resourceconfig
             )
         );
 
         return $response;
+    }
+
+    /**
+     * Called on onDoinmodal Listener method for form POST
+     *
+     * @param SimuResource $resourceInstance
+     * @return array
+     */
+    public function doinmodal(SimuResource $resourceInstance)
+    {
+        $resourceconfig = $this->userwidgetManager->getUserwidgetConfig($resourceInstance);
+
+        $form = $this->formFactory->create(
+            new SimuResourceEditType(),
+            $resourceconfig
+        );
+
+        return array(
+            'form' => $form->createView()
+        );
+    }
+    /**
+     * Called on onConfigure Listener method for form POST
+     * @param WidgetInstance $widgetInstance
+     * @return array    AJAX response
+     */
+    /**
+     * @EXT\Route(
+     *     "/userwidget/widget/{widgetInstance}/configure/form",
+     *     name="simusante_userwidget_configure_form",
+     *     options={"expose"=true}
+     * )
+     * @EXT\ParamConverter("authenticatedUser", options={"authenticatedUser" = true})
+     * @EXT\Template("SimusanteUserwidgetBundle:Widget:userwidgetConfigureForm.html.twig")
+     */
+
+
+    /**
+     * Update the SimuResource elements
+     */
+    /**
+     * @EXT\Route("/update/{simuresource}/form", name="cpasimusante_simuresource_update_form", options = {"expose" = true})
+     *
+     * @EXT\Template()
+     */
+    public function updateSimuResourceFormAction(SimuResource $simuresource)
+    {
+        $collection = new ResourceCollection(array($simuresource->getResourceNode()));
+        if (!$this->get('security.authorization_checker')->isGranted('EDIT', $collection)) {
+            throw new AccessDeniedException($collection->getErrorsForDisplay());
+        }
+        $form = $this->get('form.factory')->create(new SimuResourceEditType(), new SimuResource());
+
+        return array(
+            'form' => $form->createView(),
+            'resourceType' => 'cpasimusante_simuresource',
+            'file' => $simuresource,
+            '_resource' => $simuresource
+        );
+    }
+
+    /**
+     *
+     */
+    /**
+     * @EXT\Route("/update/{simuresource}", name="cpasimusante_simuresource_update", options = {"expose" = true})
+     *
+     * @EXT\Template("CPASimUSanteSimuresourceBundle:SimuResource:updateSimuresourceForm.html.twig")
+     */
+    public function updateSimuResourceAction(SimuResource $simuresource)
+    {
+        $collection = new ResourceCollection(array($simuresource->getResourceNode()));
+        if (!$this->get('security.authorization_checker')->isGranted('EDIT', $collection)) {
+            throw new AccessDeniedException($collection->getErrorsForDisplay());
+        }
+        $request = $this->get('request');
+        $form = $this->get('form.factory')->create(new SimuResourceEditType(), new SimuResource());
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $tmpFile = $form->get('simuresource')->getData();
+
+            if ($this->get('claroline.twig.home_extension')->isDesktop()) {
+                $arrayOptions = array('toolName' => 'resource_manager');
+            } else {
+                $arrayOptions = array(
+                        'toolName' => 'resource_manager',
+                        'workspaceId' => $simuresource->getResourceNode()->getWorkspace()->getId()
+                );
+            }
+            $url = $this->generateUrl('claro_desktop_open_tool', $arrayOptions);
+
+            return $this->redirect($url);
+        }
+
+        return array(
+            'form' => $form->createView(),
+            'resourceType' => 'cpasimusante_simuresource',
+            'file' => $simuresource,
+            '_resource' => $simuresource
+        );
+    }
+
+    /**
+     * @EXT\Route("/form/edit/{simuresource}", name="cpasimusante_simuresource_edit_form")
+     * the template for the form
+     * @EXT\Template()
+     *
+     */
+    public function editFormAction(SimuResource $simuresource)
+    {
+        //Check access
+        $collection = new ResourceCollection(array($simuresource->getResourceNode()));
+      //  $this->checkAccess('EDIT', $collection);
+
+        return array(
+            '_resource' => $simuresource
+        );
     }
 
     /**
@@ -83,11 +217,16 @@ class SimuResourceController extends Controller
         //retrieve the WS
         $workspace = $resource->getResourceNode()->getWorkspace();
 
+        $collection = new ResourceCollection(array($resource->getResourceNode()));
+        //check the user authorization to edit
+        $isGranted = $this->container->get('security.authorization_checker')->isGranted('EDIT', $collection);
+
         return array(
             'entity'        => $resource,
             'userId'        => $uid,
             'workspace'     => $workspace,
-            '_resource'     => $resource    //mandatory to keep the context and display for instance the breadcrumb in the template
+            '_resource'     => $resource,    //mandatory to keep the context and display for instance the breadcrumb in the template
+            'isEditGranted' => $isGranted
         );
     }
 }

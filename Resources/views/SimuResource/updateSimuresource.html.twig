@@ -1,0 +1,30 @@
+{% set layout = "ClarolineCoreBundle:Workspace:layout.html.twig" %}
+
+{% if isDesktop() %}
+    {% set layout = "ClarolineCoreBundle:Desktop:layout.html.twig" %}
+{% endif %}
+
+{% extends layout %}
+
+{% block title %}{{ _resource.getResourceNode().getName() | striptags | raw }}{% endblock %}
+
+{% block resourceBreadcrumb %}
+    <li><a href="{{ path('cpasimusante_simuresource_resource_open', {'simuresourceId': _resource.getId()} ) }}">{{ _resource.getResourceNode().getName() }}</a></li>
+    <li class="active">{{ 'edit' | trans({}, 'platform') }}</li>
+{% endblock %}
+
+{% block section_content %}
+    <div class="panel-heading">
+        <h3 class="panel-title">{{ _resource.getResourceNode().getName() }}</h3>
+    </div>
+    <form role="form" novalidate="validate" method="post" action="{{ _path('cpasimusante_simuresource_resource_open', {'simuresourceId':_resource.getId()}) }}" id="edit_form" {{ form_enctype(form) }}>
+        <div class="panel-body">
+            {{ form_widget(form) }}
+            {{ form_rest(form) }}
+        </div>
+        <div class="panel-footer">
+            <button type="submit" class="btn btn-primary">{{ 'ok'|trans({}, 'platform') }}</button>
+            <a class="btn btn-default" href="{{ path('cpasimusante_simuresource_resource_open', {'simuresourceId': _resource.getId()} ) }}" role="button">{{ 'cancel' | trans({}, 'platform') }}</a>
+        </div>
+    </form>
+{% endblock %}
