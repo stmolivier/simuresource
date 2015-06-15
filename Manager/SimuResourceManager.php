@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 
 /**
- *
+ * @DI\Service("cpasimusante.plugin.manager.simuresource")
  */
 class SimuResourceManager
 {

@@ -2,11 +2,13 @@
 
 namespace CPASimUSante\SimuResourceBundle\Controller;
 
+use JMS\DiExtraBundle\Annotation as DI;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration as EXT;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\Form\FormFactory; //for doinmodal()
-use Sensio\Bundle\FrameworkExtraBundle\Configuration as EXT;
 use Claroline\CoreBundle\Library\Resource\ResourceCollection;
 
 use CPASimUSante\SimuResourceBundle\Manager\SimuResourceManager;
@@ -14,12 +16,16 @@ use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
 //if we edit the resource data
 use CPASimUSante\SimuResourceBundle\Form\SimuResourceEditType;
 
-
-
 class SimuResourceController extends Controller
 {
     private $simuresourceManager;
 
+    /**
+     * @DI\InjectParams({
+     *      "simuresourceManager"   = @DI\Inject("cpasimusante.plugin.manager.simuresource")
+     * })
+     * @param SimuResourceManager $simuresourceManager
+     */
     public function __construct(
         SimuResourceManager $simuresourceManager
     )
@@ -55,6 +61,9 @@ class SimuResourceController extends Controller
         return $response;
     }
 
+    //-------------------------------
+    // METHODS FOR CUSTOM LISTENER METHODS
+    //-------------------------------
     /**
      * Called on onDoinmodal Listener method for form POST
      *
@@ -63,7 +72,7 @@ class SimuResourceController extends Controller
      */
     public function doinmodal(SimuResource $resourceInstance)
     {
-        $resourceconfig = $this->userwidgetManager->getUserwidgetConfig($resourceInstance);
+        $resourceconfig = $this->simuresourceManager->getResourceConfig($resourceInstance);
 
         $form = $this->formFactory->create(
             new SimuResourceEditType(),
@@ -74,6 +83,7 @@ class SimuResourceController extends Controller
             'form' => $form->createView()
         );
     }
+
     /**
      * Called on onConfigure Listener method for form POST
      * @param WidgetInstance $widgetInstance

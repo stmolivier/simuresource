@@ -5,8 +5,10 @@ namespace CPASimUSante\SimuResourceBundle\Listener;
 use JMS\DiExtraBundle\Annotation as DI;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use Claroline\CoreBundle\Event\CopyResourceEvent;
 use Claroline\CoreBundle\Event\CreateFormResourceEvent;
@@ -29,16 +31,28 @@ use CPASimUSante\SimuResourceBundle\Form\SimuResourceType;
 class SimuResourceResourceListener
 {
     private $container;
+    private $request;
+    private $requestStack;
+    private $httpKernel;
 
     /**
      * @DI\InjectParams({
-     *     "container" = @DI\Inject("service_container")
+     *     "container" = @DI\Inject("service_container"),
+     *     "requestStack"= @DI\Inject("request_stack"),
+     *     "httpKernel"= @DI\Inject("http_kernel")
      * })
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(
+        ContainerInterface $container,
+        requestStack $requestStack,
+        HttpKernelInterface $httpKernel
+    )
     {
         $this->container = $container;
+        $this->requestStack = $requestStack;    //for modal
+        $this->httpKernel = $httpKernel;        //for modal
     }
+
     //-------------------------------
     // PLUGIN GENERAL SETTINGS
     //-------------------------------
@@ -241,10 +255,10 @@ class SimuResourceResourceListener
     public function onDoinmodal(CustomActionResourceEvent $event)
     {
         $params = array();
-        $params['_controller'] = 'CPASimUSanteSimuResourceBundle:Simuresource:doinmodal';
-        $params['simuresource'] = $event->getResource()->getId();
+        $params['_controller'] = 'CPASimUSanteSimuResourceBundle:SimuResource:doinmodal';
+        $params['resourceInstance'] = $event->getResource()->getId();
         //Create a modal Response with the parameters
-        $subRequest = $this->request->getCurrentRequest()->duplicate(array(), null, $params);
+        $subRequest = $this->requestStack->getCurrentRequest()->duplicate(array(), null, $params);
         //Hand it to the Kernel
         $response = $this->httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
         //fill the event with the content
