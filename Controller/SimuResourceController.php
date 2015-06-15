@@ -66,22 +66,30 @@ class SimuResourceController extends Controller
     //-------------------------------
     /**
      * Called on onDoinmodal Listener method for form POST
-     *
+     * @EXT\Route(
+     *     "/edit/{resourceInstance}",
+     *     requirements={"resourceInstance" = "\d+"},
+     *     name="cpasimusante_simuresource_edit_form",
+     *     options={"expose"=true}
+     * )
      * @param SimuResource $resourceInstance
      * @return array
      */
     public function doinmodal(SimuResource $resourceInstance)
     {
         $resourceconfig = $this->simuresourceManager->getResourceConfig($resourceInstance);
+        die('arg');
 
-        $form = $this->formFactory->create(
-            new SimuResourceEditType(),
-            $resourceconfig
-        );
+                $form = $this->formFactory->create(
+                    new SimuResourceEditType(),
+                    $resourceconfig
+                );
 
-        return array(
-            'form' => $form->createView()
-        );
+                return array(
+                    'form' => $form->createView(),
+                    'config' => $resourceconfig
+                );
+
     }
 
     /**

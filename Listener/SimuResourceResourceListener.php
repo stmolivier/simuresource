@@ -4,6 +4,7 @@ namespace CPASimUSante\SimuResourceBundle\Listener;
 
 use JMS\DiExtraBundle\Annotation as DI;
 
+use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,27 +29,23 @@ use CPASimUSante\SimuResourceBundle\Form\SimuResourceType;
 /**
  *  @DI\Service()
  */
-class SimuResourceResourceListener
+class SimuResourceResourceListener extends ContainerAware
 {
-    private $container;
     private $request;
     private $requestStack;
     private $httpKernel;
 
     /**
      * @DI\InjectParams({
-     *     "container" = @DI\Inject("service_container"),
      *     "requestStack"= @DI\Inject("request_stack"),
      *     "httpKernel"= @DI\Inject("http_kernel")
      * })
      */
     public function __construct(
-        ContainerInterface $container,
         requestStack $requestStack,
         HttpKernelInterface $httpKernel
     )
     {
-        $this->container = $container;
         $this->requestStack = $requestStack;    //for modal
         $this->httpKernel = $httpKernel;        //for modal
     }
@@ -254,13 +251,21 @@ class SimuResourceResourceListener
      */
     public function onDoinmodal(CustomActionResourceEvent $event)
     {
-        $params = array();
+        $resourceInstance = $event->getResource();
+        $route = $this->container
+            ->get('router')
+            ->generate('cpasimusante_simuresource_edit_form', array(
+                    'resourceInstance' => $resourceInstance->getId(),
+                    'workspaceId' => $resourceInstance->getWorkspace()->getId()
+                )
+            );
+       /* $params = array();
         $params['_controller'] = 'CPASimUSanteSimuResourceBundle:SimuResource:doinmodal';
         $params['resourceInstance'] = $event->getResource()->getId();
         //Create a modal Response with the parameters
         $subRequest = $this->requestStack->getCurrentRequest()->duplicate(array(), null, $params);
         //Hand it to the Kernel
-        $response = $this->httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        $response = $this->httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);*/
         //fill the event with the content
         $event->setResponse($response);
         $event->stopPropagation();

@@ -1,6 +1,11 @@
 cpasimusante_simuresource: SimuResource
 cpasimusante_simuresource_plugin_updated: "Plugin updated"
 
+#custom listener methods
+dostuff: "Do Stuff"
+doinmodal: "Do in modal"
+updatesimuresourceinpage: "Update SimuResource in page"
+
 #Entity fields
 field: "Field"
 otherfield: "Other field"
