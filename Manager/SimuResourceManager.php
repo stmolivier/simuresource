@@ -2,6 +2,8 @@
 
 namespace CPASimUSante\SimuResourceBundle\Manager;
 
+use Claroline\CoreBundle\Entity\Resource\ResourceNode;  //for getResourceConfigByNode
+
 use Doctrine\ORM\EntityManager;
 use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -9,7 +11,7 @@ use Claroline\CoreBundle\Persistence\ObjectManager;
 use CPASimUSante\SimuresourceBundle\Entity\Simuresource;
 use CPASimUSante\SimuresourceBundle\Repository\SimuResourceRepository;
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * @DI\Service("cpasimusante.plugin.manager.simuresource")
@@ -68,6 +70,22 @@ class SimuResourceManager
         }
     }
 
+    public function getResourceConfigByNode($node)
+    {
+        $resourceconfig = $this->em->getRepository("CPASimUSanteSimuResourceBundle:SimuResource")->findOneBy(
+            array('resourceNode' => $node)
+        );
+        //no config set
+        if (sizeof($resourceconfig) == 0)
+        {
+            return new SimuResource();
+        }
+        else
+        {
+            return $resourceconfig;
+        }
+    }
+
     /**
      * @param SimuResource $resourceconfig
      * @return \Symfony\Component\Form\FormInterface
@@ -98,6 +116,25 @@ class SimuResourceManager
             $this->em->persist($resourceconfig);
             $this->em->flush();
             return $resourceconfig;
+        }
+    }
+
+    /**
+     * Configuration form process
+     *
+     * @param SimuResource $resourceconfig
+     * @param Request $request
+     * @return SimuResource
+     */
+    public function processFormJson(SimuResource $resourceconfig, Request $request)
+    {
+        $form = $this->getResourceConfigForm($resourceconfig);
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            $resourceconfig = $form->getData();
+            $this->em->persist($resourceconfig);
+            $this->em->flush();
+            return new JsonResponse($resourceconfig);
         }
     }
 }

@@ -269,9 +269,8 @@ class SimuResourceResourceListener extends ContainerAware
         $resourceInstance = $event->getResource();
 //        $resourceconfig = $this->simuresourceManager->getResourceConfig($resourceInstance);
 
-       /*
-       //possibility 1 : all is done in listener
-       $form = $this->container->get('form.factory')->create(new SimuResourceType(), $resourceInstance);
+        //possibility 1 : all is done in listener
+        $form = $this->container->get('form.factory')->create(new SimuResourceEditType(), $resourceInstance);
         $form->handleRequest($this->request);
         $content = $this->templating->render(
             'CPASimUSanteSimuResourceBundle:SimuResource:doinmodal.html.twig',
@@ -282,19 +281,19 @@ class SimuResourceResourceListener extends ContainerAware
         );
         $event->setResponse(new Response($content));
         $event->stopPropagation();
-        */
 
-        //possibility 2 : all is done in controller
+/*
+        //possibility 2 : logic sent to controller
         $route = $this->container
             ->get('router')
             ->generate('cpasimusante_simuresource_edit_form',
                 array(
-                    'resourceInstance' => $resourceInstance->getId(),
                     'node' => $event->getResource()->getResourceNode()->getId()
                 ));
         $response = new RedirectResponse($route);
         $event->setResponse($response);
         $event->stopPropagation();
+*/
     }
 
     /**
