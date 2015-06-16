@@ -1,6 +1,6 @@
 <?php
 
-namespace CPASimUSante\SimuresourceBundle\Controller;
+namespace CPASimUSante\SimuResourceBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller as BaseController;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -37,5 +37,10 @@ class Controller extends BaseController
             return true;
         }
         throw new AccessDeniedException();
+    }
+
+    protected function getFactory()
+    {
+        return $this->get("form.factory");
     }
 }

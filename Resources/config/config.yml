@@ -12,5 +12,6 @@ plugin:
                 menu_name: dostuff
               - name: doinmodal
                 menu_name: doinmodal
+                is_form: true
               - name: updatesimuresourceinpage
                 menu_name: updatesimuresourceinpage

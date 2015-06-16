@@ -23,9 +23,10 @@ use Claroline\CoreBundle\Event\ExportResourceTemplateEvent;
 use Claroline\CoreBundle\Event\ImportResourceTemplateEvent;
 use Claroline\CoreBundle\Event\PluginOptionsEvent;
 
+use CPASimUSante\SimuResourceBundle\Manager\SimuResourceManager;
 use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
 use CPASimUSante\SimuResourceBundle\Form\SimuResourceType;
-
+use CPASimUSante\SimuResourceBundle\Form\SimuResourceEditType;
 
 /**
  *  @DI\Service()
@@ -38,27 +39,32 @@ class SimuResourceResourceListener extends ContainerAware
     private $request;
     private $requestStack;
     private $httpKernel;
+    private $simuresourceManager;
 
     /**
      * @DI\InjectParams({
      *     "requestStack"= @DI\Inject("request_stack"),
      *     "httpKernel"= @DI\Inject("http_kernel"),
-     *     "container"=@DI\Inject("service_container")
+     *     "container"=@DI\Inject("service_container"),
+     *     "simuresourceManager"=@DI\Inject("cpasimusante.plugin.manager.simuresource")
      * })
      */
 
     public function __construct(
         requestStack $requestStack,
         HttpKernelInterface $httpKernel,
-        ContainerInterface $container
+        ContainerInterface $container,
+        SimuResourceManager $simuresourceManager
     )
     {
         $this->requestStack = $requestStack;    //for modal
+        $this->request = $requestStack->getCurrentRequest();
         $this->httpKernel = $httpKernel;        //for modal
         //if use of "extends ContainerAware", no declaration of $container attribute
         $this->setContainer($container);
         $this->templating = $container->get('templating');
         $this->formfactory = $container->get('form.factory');
+        $this->simuresourceManager = $simuresourceManager;
     }
     //-------------------------------
     // PLUGIN GENERAL SETTINGS
@@ -81,7 +87,7 @@ class SimuResourceResourceListener extends ContainerAware
                 'form' => $form->createView()
             )
         );*/
-        $content = "resource";
+        $content = "Some parameters";
         //PluginOptionsEvent require a setResponse()
         $event->setResponse(new Response($content));
         $event->stopPropagation();
@@ -260,23 +266,28 @@ class SimuResourceResourceListener extends ContainerAware
     public function onDoinmodal(CustomActionResourceEvent $event)
     {
         $resourceInstance = $event->getResource();
+//        $resourceconfig = $this->simuresourceManager->getResourceConfig($resourceInstance);
+        $form = $this->container->get('form.factory')->create(new SimuResourceType(), $resourceInstance);
+        $form->handleRequest($this->request);
+        $content = $this->templating->render(
+            'CPASimUSanteSimuResourceBundle:SimuResource:dostuff.html.twig',
+            array(
+                'form' => $form->createView(),
+                'node' => $event->getResource()->getResourceNode()->getId()
+            )
+        );
+        $event->setResponse(new Response($content));
+        $event->stopPropagation();
+        /*
         $route = $this->container
             ->get('router')
-            ->generate('cpasimusante_simuresource_edit_form', array(
-                    'resourceInstance' => $resourceInstance->getId(),
-                    'workspaceId' => $resourceInstance->getWorkspace()->getId()
-                )
-            );
-       /* $params = array();
-        $params['_controller'] = 'CPASimUSanteSimuResourceBundle:SimuResource:doinmodal';
-        $params['resourceInstance'] = $event->getResource()->getId();
-        //Create a modal Response with the parameters
-        $subRequest = $this->requestStack->getCurrentRequest()->duplicate(array(), null, $params);
-        //Hand it to the Kernel
-        $response = $this->httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);*/
-        //fill the event with the content
+            ->generate('cpasimusante_simuresource_edit_form',
+                array(
+                    'resourceInstance' => $resourceInstance->getId()
+                ));
+        $response = new RedirectResponse($route);
         $event->setResponse($response);
-        $event->stopPropagation();
+        */
     }
 
     /**

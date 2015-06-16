@@ -64,7 +64,7 @@ class SimuResourceManager
         }
         else
         {
-            return $resourceconfig[0];
+            return $resourceconfig;
         }
     }
 

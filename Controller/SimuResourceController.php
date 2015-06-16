@@ -5,16 +5,18 @@ namespace CPASimUSante\SimuResourceBundle\Controller;
 use JMS\DiExtraBundle\Annotation as DI;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration as EXT;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+//use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\Form\FormFactory; //for doinmodal()
 use Claroline\CoreBundle\Library\Resource\ResourceCollection;
 
+use CPASimUSante\SimuResourceBundle\Controller\Controller;
 use CPASimUSante\SimuResourceBundle\Manager\SimuResourceManager;
 use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
 //if we edit the resource data
 use CPASimUSante\SimuResourceBundle\Form\SimuResourceEditType;
+
 
 class SimuResourceController extends Controller
 {
@@ -64,6 +66,44 @@ class SimuResourceController extends Controller
     //-------------------------------
     // METHODS FOR CUSTOM LISTENER METHODS
     //-------------------------------
+
+
+
+    /**
+     * @EXT\Route(
+     *     "/change/{node}",
+     *     name="doinmodal_change",
+     *     options={"expose"=true}
+     * )
+     * @EXT\Template("CPASimUSanteSimuResourceBundle:SimuResource:dostuff.html.twig")
+     */
+    public function doinmodalAction(ResourceNode $node)
+    {
+        if (!$this->get('security.authorization_checker')->isGranted('edit', $node)) {
+            throw new AccessDeniedException();
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $url = $em->getRepository('HeVinciUrlBundle:Url')
+            ->findOneBy(array('resourceNode' => $node->getId()));
+
+        if (!$url){
+            throw new \Exception("This resource doesn't exist.");
+        }
+
+        $form = $this->formFactory->create(new UrlChangeType(), $url);
+        $form->handleRequest($this->request);
+
+        if ($form->isValid()){
+            $this->urlManager->setUrl($form->getData());
+            $em->flush();
+
+            return new JsonResponse();
+        }
+
+        return array('form' => $form->createView(), 'node' => $node->getId());
+    }
+
     /**
      * Called on onDoinmodal Listener method for form POST
      * @EXT\Route(
@@ -72,24 +112,26 @@ class SimuResourceController extends Controller
      *     name="cpasimusante_simuresource_edit_form",
      *     options={"expose"=true}
      * )
+     *
+     * @EXT\Template("CPASimUSanteSimuResourceBundle:SimuResource:dostuff.html.twig")
+     *
      * @param SimuResource $resourceInstance
+     *
      * @return array
      */
     public function doinmodal(SimuResource $resourceInstance)
     {
         $resourceconfig = $this->simuresourceManager->getResourceConfig($resourceInstance);
-        die('arg');
 
-                $form = $this->formFactory->create(
-                    new SimuResourceEditType(),
-                    $resourceconfig
-                );
+        $form = $this->getFactory()->create(
+            new SimuResourceEditType(),
+            $resourceconfig
+        );
 
-                return array(
-                    'form' => $form->createView(),
-                    'config' => $resourceconfig
-                );
-
+        return array(
+            'form' => $form->createView(),
+            'config' => $resourceconfig
+        );
     }
 
     /**
@@ -175,7 +217,7 @@ class SimuResourceController extends Controller
     }
 
     /**
-     * @EXT\Route("/form/edit/{simuresource}", name="cpasimusante_simuresource_edit_form")
+     * @EXT\Route("/form/edit/{simuresource}", name="cpasimusante_simuresource_edit_form2")
      * the template for the form
      * @EXT\Template()
      *
