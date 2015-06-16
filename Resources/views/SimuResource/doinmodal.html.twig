@@ -1,0 +1,21 @@
+<div class='modal-dialog'>
+    <form role="form" novalidate="novalidate"
+          action="{{ path('doinmodal_change', {'node': node}) }}" {{ form_enctype(form) }}
+          method="post" id="generic-form" class="modal-content">
+        <div class='modal-header'>
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">{{ node }}</h4>
+        </div>
+        <div class='modal-body'>
+            {{ form_widget(form) }}
+            {# <div style="display: none"> allows to set fields, here "otherfield" (in the Listener > onCreateForm() without allowing to show/modify them #}
+            <div>
+                {{ form_rest(form) }}
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'cancel'|trans({}, 'platform') }}</button>
+            <button type="submit" class="btn btn-primary">{{ 'ok'|trans({}, 'platform') }}</button>
+        </div>
+    </form>
+</div>

@@ -248,6 +248,7 @@ class SimuResourceResourceListener extends ContainerAware
         $content = $this->templating->render(
             'CPASimUSanteSimuResourceBundle:SimuResource:dostuff.html.twig',
             array(
+                '_resource' => $event->getResource()    //needed to get context and display the breadcrumb
             )
         );
         $response = new Response($content);
@@ -270,7 +271,7 @@ class SimuResourceResourceListener extends ContainerAware
         $form = $this->container->get('form.factory')->create(new SimuResourceType(), $resourceInstance);
         $form->handleRequest($this->request);
         $content = $this->templating->render(
-            'CPASimUSanteSimuResourceBundle:SimuResource:dostuff.html.twig',
+            'CPASimUSanteSimuResourceBundle:SimuResource:doinmodal.html.twig',
             array(
                 'form' => $form->createView(),
                 'node' => $event->getResource()->getResourceNode()->getId()
