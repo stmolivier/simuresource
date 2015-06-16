@@ -38,4 +38,9 @@ class SimuResourceEditType extends AbstractType
     {
         return 'cpasimusante_simuresourcebundle_simuresource_edit';
     }
+
+    public function getParent()
+    {
+        return new SimuResourceType();
+    }
 }

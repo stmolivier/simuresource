@@ -15,6 +15,7 @@ use CPASimUSante\SimuResourceBundle\Controller\Controller;
 use CPASimUSante\SimuResourceBundle\Manager\SimuResourceManager;
 use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
 //if we edit the resource data
+//use CPASimUSante\SimuResourceBundle\Form\SimuResourceType;
 use CPASimUSante\SimuResourceBundle\Form\SimuResourceEditType;
 
 
@@ -67,8 +68,6 @@ class SimuResourceController extends Controller
     // METHODS FOR CUSTOM LISTENER METHODS
     //-------------------------------
 
-
-
     /**
      * @EXT\Route(
      *     "/change/{node}",
@@ -107,19 +106,19 @@ class SimuResourceController extends Controller
     /**
      * Called on onDoinmodal Listener method for form POST
      * @EXT\Route(
-     *     "/edit/{resourceInstance}",
+     *     "/edit/{resourceInstance}/node/{node}",
      *     requirements={"resourceInstance" = "\d+"},
      *     name="cpasimusante_simuresource_edit_form",
      *     options={"expose"=true}
      * )
      *
-     * @EXT\Template("CPASimUSanteSimuResourceBundle:SimuResource:dostuff.html.twig")
+     * @EXT\Template("CPASimUSanteSimuResourceBundle:SimuResource:doinmodal.html.twig")
      *
      * @param SimuResource $resourceInstance
      *
      * @return array
      */
-    public function doinmodal(SimuResource $resourceInstance)
+    public function doinmodal(SimuResource $resourceInstance, $node)
     {
         $resourceconfig = $this->simuresourceManager->getResourceConfig($resourceInstance);
 
@@ -130,7 +129,8 @@ class SimuResourceController extends Controller
 
         return array(
             'form' => $form->createView(),
-            'config' => $resourceconfig
+            'config' => $resourceconfig,
+            'node' => $node
         );
     }
 
