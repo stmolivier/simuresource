@@ -1,6 +1,6 @@
 <?php
 
-namespace CPASimUSante\SimuresourceBundle\Manager;
+namespace CPASimUSante\SimuResourceBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
 use JMS\DiExtraBundle\Annotation as DI;

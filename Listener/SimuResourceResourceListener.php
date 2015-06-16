@@ -6,6 +6,7 @@ use JMS\DiExtraBundle\Annotation as DI;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -31,6 +32,9 @@ use CPASimUSante\SimuResourceBundle\Form\SimuResourceType;
  */
 class SimuResourceResourceListener extends ContainerAware
 {
+    /**
+     * @var
+     */
     private $request;
     private $requestStack;
     private $httpKernel;
@@ -38,18 +42,24 @@ class SimuResourceResourceListener extends ContainerAware
     /**
      * @DI\InjectParams({
      *     "requestStack"= @DI\Inject("request_stack"),
-     *     "httpKernel"= @DI\Inject("http_kernel")
+     *     "httpKernel"= @DI\Inject("http_kernel"),
+     *     "container"=@DI\Inject("service_container")
      * })
      */
+
     public function __construct(
         requestStack $requestStack,
-        HttpKernelInterface $httpKernel
+        HttpKernelInterface $httpKernel,
+        ContainerInterface $container
     )
     {
         $this->requestStack = $requestStack;    //for modal
         $this->httpKernel = $httpKernel;        //for modal
+        //if use of "extends ContainerAware", no declaration of $container attribute
+        $this->setContainer($container);
+        $this->templating = $container->get('templating');
+        $this->formfactory = $container->get('form.factory');
     }
-
     //-------------------------------
     // PLUGIN GENERAL SETTINGS
     //-------------------------------
@@ -92,9 +102,8 @@ class SimuResourceResourceListener extends ContainerAware
     {
         $resource = new SimuResource();
         $resource->setOtherfield(44);
-        $form = $this->container->get('form.factory')
-            ->create(new SimuResourceType(), $resource);
-        $content = $this->container->get('templating')->render(
+        $form = $this->formfactory->create(new SimuResourceType(), $resource);
+        $content = $this->templating->render(
             //use this one if i want to override the generic template : 'ClarolineCoreBundle:Resource:createForm.html.twig',
             //i.e : the generic template displays all fields
             'CPASimUSanteSimuResourceBundle:SimuResource:createForm.html.twig',
@@ -117,8 +126,7 @@ class SimuResourceResourceListener extends ContainerAware
     public function onCreate(CreateResourceEvent $event)
     {
         $request = $this->container->get('request');
-        $form = $this->container->get('form.factory')
-            ->create(new SimuResourceType(), new SimuResource());
+        $form = $this->formfactory->create(new SimuResourceType(), new SimuResource());
 
         $form->handleRequest($request);
         if ($form->isValid()) {
@@ -137,7 +145,7 @@ class SimuResourceResourceListener extends ContainerAware
             return;
         }
 
-        $content = $this->container->get('templating')->render(
+        $content = $this->templating->render(
             'CPASimUSanteSimuResourceBundle:SimuResource:createForm.html.twig',
             array(
                 'form' => $form->createView(),
@@ -145,6 +153,25 @@ class SimuResourceResourceListener extends ContainerAware
             )
         );
         $event->setErrorFormContent($content);
+        $event->stopPropagation();
+    }
+
+    /**
+     * @DI\Observe("open_cpasimusante_simuresource")
+     *
+     * @param OpenResourceEvent $event
+     */
+    public function onOpen(OpenResourceEvent $event)
+    {
+        //Redirection to the controller.
+        $route = $this->container
+            ->get('router')
+            ->generate('cpasimusante_simuresource_resource_open',
+                array(
+                    'simuresourceId' => $event->getResource()->getId()
+                ));
+        $response = new RedirectResponse($route);
+        $event->setResponse($response);
         $event->stopPropagation();
     }
 
@@ -199,25 +226,6 @@ class SimuResourceResourceListener extends ContainerAware
         $event->stopPropagation();
     }
 
-    /**
-     * @DI\Observe("open_cpasimusante_simuresource")
-     *
-     * @param OpenResourceEvent $event
-     */
-    public function onOpen(OpenResourceEvent $event)
-    {
-        //Redirection to the controller.
-        $route = $this->container
-            ->get('router')
-            ->generate('cpasimusante_simuresource_resource_open',
-                array(
-                    'simuresourceId' => $event->getResource()->getId()
-                ));
-        $response = new RedirectResponse($route);
-        $event->setResponse($response);
-        $event->stopPropagation();
-    }
-
     //-------------------------------
     // CUSTOM SETTINGS
     //-------------------------------
@@ -229,9 +237,9 @@ class SimuResourceResourceListener extends ContainerAware
      *
      * @param CustomActionResourceEvent $event
      */
-    public function onDostuff(CustomActionResourceEvent $event)
+    public function onDostuff( \Claroline\CoreBundle\Event\CustomActionResourceEvent $event)
     {
-        $content = $this->container->get('templating')->render(
+        $content = $this->templating->render(
             'CPASimUSanteSimuResourceBundle:SimuResource:dostuff.html.twig',
             array(
             )
@@ -282,7 +290,7 @@ class SimuResourceResourceListener extends ContainerAware
     public function onUpdatesimuresourceinpage(CustomActionResourceEvent $event)
     {
         $resource =  $event->getResource();
-        $content = $this->container->get('templating')->render(
+        $content = $this->templating->render(
             'CPASimUSanteSimuResourceBundle:SimuResource:updatesimuresourceinpage.html.twig',
             array(
                 '_resource' => $resource,
