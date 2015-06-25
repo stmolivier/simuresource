@@ -33,6 +33,11 @@ class SimuResource extends AbstractResource
     protected $otherfield;
 
     /**
+     * @ORM\Column(name="otherfield2", type="integer")
+     */
+    protected $otherfield2;
+
+    /**
      * The file uploaded, but not saved in entity/DB => no ORM\Column
      */
     protected $file;
@@ -92,5 +97,29 @@ class SimuResource extends AbstractResource
     public function setFile(UploadedFile $file) {
         $this->file = $file;
         return $this;
+    }
+
+    /**
+     * Set otherfield2
+     *
+     * @param integer $otherfield2
+     *
+     * @return SimuResource
+     */
+    public function setOtherfield2($otherfield2)
+    {
+        $this->otherfield2 = $otherfield2;
+
+        return $this;
+    }
+
+    /**
+     * Get otherfield2
+     *
+     * @return integer
+     */
+    public function getOtherfield2()
+    {
+        return $this->otherfield2;
     }
 }
