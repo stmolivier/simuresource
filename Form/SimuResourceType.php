@@ -21,6 +21,9 @@ class SimuResourceType extends AbstractType
             ->add('otherfield', 'text', array(
                 'label' => 'otherfield'
             ))
+            ->add('otherfield2', 'text', array(
+                'label' => 'otherfield'
+            ))
             //->add('resourceNode')
         ;
     }

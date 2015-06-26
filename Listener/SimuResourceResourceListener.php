@@ -107,7 +107,8 @@ class SimuResourceResourceListener extends ContainerAware
     public function onCreateForm(CreateFormResourceEvent $event)
     {
         $resource = new SimuResource();
-        $resource->setOtherfield(44);
+        $resource->setOtherfield(45);
+        $resource->setOtherfield2(55);
         $form = $this->formfactory->create(new SimuResourceType(), $resource);
         $content = $this->templating->render(
             //use this one if i want to override the generic template : 'ClarolineCoreBundle:Resource:createForm.html.twig',
