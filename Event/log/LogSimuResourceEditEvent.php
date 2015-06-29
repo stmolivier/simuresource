@@ -14,18 +14,18 @@ use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
  * @package CPASimUSante\SimuResourceBundle\Event\Log
  */
 class LogSimuResourceEditEvent
-    extends AbstractLogResourceEvent //log associated to a resource, or
-    //extends AbstractLogToolEvent //log associated to a tool, or
-    //extends AbstractLogWidgetEvent //log associated to a widget
+    extends AbstractLogResourceEvent    //log associated to a resource, or
+    //extends AbstractLogToolEvent      //log associated to a tool, or
+    //extends AbstractLogWidgetEvent    //log associated to a widget
     implements NotifiableInterface {
 
-    //Mandatory, to define the specific action in the log
-    //3 parts separated by dashes, each part may have undescore in them :
-    // - type of object it's associated to (resource, platform, workspace, user, role, tools, widget..) : here, resource
+    //Constant, mandatory, to define the specific action in the log
+    //name in 3 parts separated by dashes, each part may have underscore in them :
+    // - type of object it's associated to (resource, platform, workspace, user, role, tools, widget..)
     // - type of the resource (optional)    here, cpasimusante_simuresource => name in config.yml
-    // - action executed (login, post_create...)
+    // - action executed (login, post_create, whatever...)
     const ACTION = 'resource-cpasimusante_simuresource-simuresource_edit';
-    //Other paramteters sent
+    //Other paramteters sent to the log
     protected $simuresource;
     protected $details;
     private $userIds = array();

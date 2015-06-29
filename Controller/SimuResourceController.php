@@ -295,9 +295,9 @@ class SimuResourceController extends Controller
         } else {
             $uid = 'anonymous';
         }
-
+        $node = $resource->getResourceNode();
         //retrieve the WS
-        $workspace = $resource->getResourceNode()->getWorkspace();
+        $workspace = $node->getWorkspace();
 
         $collection = new ResourceCollection(array($resource->getResourceNode()));
         //check the user authorization to edit
@@ -308,7 +308,8 @@ class SimuResourceController extends Controller
             'userId'        => $uid,
             'workspace'     => $workspace,
             '_resource'     => $resource,    //mandatory to keep the context and display for instance the breadcrumb in the template
-            'isEditGranted' => $isGranted
+            'isEditGranted' => $isGranted,
+            'node'          => $node
         );
     }
 }

@@ -1,14 +1,17 @@
 services:
+#listener to display notification details
     cpasimusante.listener.simuresource.display_log_listener:
-            class: CPASimUSante\SimuResourceBundle\Listener\Log\DisplayLogListener
-            calls:
-                - [setContainer, ["@service_container"]]
-            tags:
-                - { name: kernel.event_listener, event: create_log_details_resource-cpasimusante_simuresource-simuresource_edit,   method: onCreateLogDetails }
-
+        class: CPASimUSante\SimuResourceBundle\Listener\Log\DisplayLogListener
+        calls:
+            - [setContainer, ["@service_container"]]
+        tags:
+#format for event: create_log_details_%actionname%
+            - { name: kernel.event_listener, event: create_log_details_resource-cpasimusante_simuresource-simuresource_edit,   method: onCreateLogDetails }
+#listener to display in notification list
     cpasimusante.listener.simuresource.notification_listener:
-            class: CPASimUSante\SimuResourceBundle\Listener\NotificationListener
-            calls:
-                - [setContainer, ["@service_container"]]
-            tags:
-                - { name: kernel.event_listener, event: create_notification_item_resource-cpasimusante_simuresource-simuresource_edit,    method: onCreateNotificationItem }
+        class: CPASimUSante\SimuResourceBundle\Listener\NotificationListener
+        calls:
+            - [setContainer, ["@service_container"]]
+#format for event: create_notification_item_%actionname%
+        tags:
+            - { name: kernel.event_listener, event: create_notification_item_resource-cpasimusante_simuresource-simuresource_edit,    method: onCreateNotificationItem }

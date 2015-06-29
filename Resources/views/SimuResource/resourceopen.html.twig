@@ -27,7 +27,7 @@
         </a>
     {% endif %}
     {% if isEditGranted %}
-        <a class="btn btn-primary" href="{{ _path('cpasimusante_simuresource_edit_form', {'simuresource': _resource.getId()}) }}" role="button">{{ 'edit' | trans({}, 'platform') }}</a>
+        <a class="btn btn-primary" href="{{ _path('cpasimusante_simuresource_edit_form', {'node': node.id}) }}" role="button">{{ 'edit' | trans({}, 'platform') }}</a>
     {% endif %}
     {# END back to resource list #}
 
