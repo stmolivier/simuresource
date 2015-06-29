@@ -1,11 +1,12 @@
 {#
 path : here, open the resource (route name in controller)
-notification : translation file
+notification.actionKey : namme of the ACTION const in Event/Log/LogSimuResourceEditEvent.php
+%simuresource% and %simuparam1% : params to translate in the notification.actionKey translation
 #}
+notification_simuresource_edit.html.twig
 <a href="{{ path('cpasimusante_simuresource_resource_open', {'resourceId' : notification.details.resource.id}) }}" target="_blank">
     {{ notification.actionKey|trans({
         '%simuresource%' : notification.details.resource.name,
-        '%newState%' : notification.details.newState|trans({
-        },'resource')
+        '%simuparam1%' : notification.details.simuparam1|trans({ },'resource')
     }, 'notification') }}
-</a>
+</a>aa

@@ -17,6 +17,7 @@ use Claroline\CoreBundle\Entity\Resource\ResourceNode;
 
 use CPASimUSante\SimuResourceBundle\Controller\Controller;
 use CPASimUSante\SimuResourceBundle\Manager\SimuResourceManager;
+use CPASimUSante\SimuResourceBundle\Manager\GeneralManager;
 use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
 //if we edit the resource data
 //use CPASimUSante\SimuResourceBundle\Form\SimuResourceType;
@@ -29,20 +30,24 @@ class SimuResourceController extends Controller
 {
     private $simuresourceManager;
     private $request;
+    private $generalManager;
     /**
      * @DI\InjectParams({
      *     "simuresourceManager"    = @DI\Inject("cpasimusante.plugin.manager.simuresource"),
-     *     "requestStack"           = @DI\Inject("request_stack")
+     *     "requestStack"           = @DI\Inject("request_stack"),
+     *     "generalManager"         = @DI\Inject("cpasimusante.plugin.manager.general")
      * })
      * @param SimuResourceManager $simuresourceManager
      */
     public function __construct(
         SimuResourceManager $simuresourceManager,
-        RequestStack $requestStack
+        RequestStack $requestStack,
+        GeneralManager $generalManager
     )
     {
         $this->simuresourceManager = $simuresourceManager;
         $this->request = $requestStack->getCurrentRequest();
+        $this->generalManager = $generalManager;
     }
 
     /**
@@ -138,16 +143,6 @@ class SimuResourceController extends Controller
             $sr = $form->getData();
             $em->persist($sr);
             $em->flush();
-
-            //Begin send notification (custom)
-            //no use here, but to send the notification to a user
-            //We could retrieve users from the WS and send an array
-            $user = $this->container->get('security.token_storage')->getToken()->getUser();
-            //create an event, and pass some parameters
-            $event = new LogSimuResourceEditEvent($simuresource, array($user->getId()));
-            //send the event to the event dispatcher
-            $this->get('event_dispatcher')->dispatch('log', $event); //don't change it.
-            //End send notification
 
             return new JsonResponse();
         }
@@ -303,13 +298,24 @@ class SimuResourceController extends Controller
         //check the user authorization to edit
         $isGranted = $this->container->get('security.authorization_checker')->isGranted('EDIT', $collection);
 
+
+        //Begin send notification (custom)
+        $userIds = $this->generalManager->getUsersIdsForResourceByRights($node, 'open', false);
+        //$userIds = array of user id. Here, users who can open the resource
+        //create an event, and pass some parameters
+        $event = new LogSimuResourceEditEvent($resource, $userIds);
+        //send the event to the event dispatcher
+        $this->get('event_dispatcher')->dispatch('log', $event); //don't change it.
+        //End send notification
+
         return array(
             'entity'        => $resource,
             'userId'        => $uid,
             'workspace'     => $workspace,
             '_resource'     => $resource,    //mandatory to keep the context and display for instance the breadcrumb in the template
             'isEditGranted' => $isGranted,
-            'node'          => $node
+            'node'          => $node,
+            'uids'          => $userIds     //just for testing purpose
         );
     }
 }

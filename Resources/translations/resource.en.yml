@@ -9,3 +9,6 @@ updatesimuresourceinpage: "Update SimuResource in page"
 #Entity fields
 field: "Field"
 otherfield: "Other field"
+
+#notification param
+simuparamvalue1: "value of param 1"

@@ -38,7 +38,7 @@ class LogSimuResourceEditEvent
         $this->simuresource = $simuresource;
         $this->userIds = $userIds;
         $this->details = array(
-            'newState'=> 'xxSome stuffxx'
+            'simuparam1'=> 'simuparamvalue1'
         );
 
         parent::__construct($simuresource->getResourceNode(), $this->details);

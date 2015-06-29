@@ -9,3 +9,6 @@ updatesimuresourceinpage: "Mettre à jour dans une page"
 #Entity fields
 field: "Champ"
 otherfield: "autre champ"
+
+#notification param
+simuparamvalue1: "valeur du param 1"

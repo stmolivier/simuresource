@@ -14,6 +14,9 @@
 <div class="panel-body">
    <p>Otherfield : {{ entity.otherfield }}</p>
     <p>User : {{ userId }}</p>
+<ul>{% for uid in uids %}
+    <li>{{ uid }} can open this resource</li>
+{% endfor %}</ul>
 </div>
 <div class="panel-footer">
     {# BEGIN back to resource list #}
