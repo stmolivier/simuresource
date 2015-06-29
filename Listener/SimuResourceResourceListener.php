@@ -269,7 +269,7 @@ class SimuResourceResourceListener extends ContainerAware
     {
         $resourceInstance = $event->getResource();
 //        $resourceconfig = $this->simuresourceManager->getResourceConfig($resourceInstance);
-
+/*
         //possibility 1 : all is done in listener
         $form = $this->container->get('form.factory')->create(new SimuResourceEditType(), $resourceInstance);
         $form->handleRequest($this->request);
@@ -282,7 +282,7 @@ class SimuResourceResourceListener extends ContainerAware
         );
         $event->setResponse(new Response($content));
         $event->stopPropagation();
-/*
+*/
         //possibility 2 : logic sent to controller
         $route = $this->container
             ->get('router')
@@ -293,7 +293,7 @@ class SimuResourceResourceListener extends ContainerAware
         $response = new RedirectResponse($route);
         $event->setResponse($response);
         $event->stopPropagation();
-*/
+
     }
 
     /**

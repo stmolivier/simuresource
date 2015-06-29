@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration as EXT;
 //use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\BrowserKit\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Form\FormFactory; //for doinmodal()
@@ -20,7 +21,9 @@ use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
 //if we edit the resource data
 //use CPASimUSante\SimuResourceBundle\Form\SimuResourceType;
 use CPASimUSante\SimuResourceBundle\Form\SimuResourceEditType;
-use Symfony\Component\HttpFoundation\JsonResponse;
+//for notification Event
+use CPASimUSante\SimuResourceBundle\Event\Log\LogSimuResourceEditEvent;
+
 
 class SimuResourceController extends Controller
 {
@@ -28,8 +31,8 @@ class SimuResourceController extends Controller
     private $request;
     /**
      * @DI\InjectParams({
-     *      "simuresourceManager"   = @DI\Inject("cpasimusante.plugin.manager.simuresource"),
-     *     "requestStack"       = @DI\Inject("request_stack")
+     *     "simuresourceManager"    = @DI\Inject("cpasimusante.plugin.manager.simuresource"),
+     *     "requestStack"           = @DI\Inject("request_stack")
      * })
      * @param SimuResourceManager $simuresourceManager
      */
@@ -135,6 +138,16 @@ class SimuResourceController extends Controller
             $sr = $form->getData();
             $em->persist($sr);
             $em->flush();
+
+            //Begin send notification (custom)
+            //no use here, but to send the notification to a user
+            //We could retrieve users from the WS and send an array
+            $user = $this->container->get('security.token_storage')->getToken()->getUser();
+            //create an event, and pass some parameters
+            $event = new LogSimuResourceEditEvent($simuresource, array($user->getId()));
+            //send the event to the event dispatcher
+            $this->get('event_dispatcher')->dispatch('log', $event); //don't change it.
+            //End send notification
 
             return new JsonResponse();
         }

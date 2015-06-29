@@ -1,0 +1,8 @@
+{% extends 'ClarolineCoreBundle:Log:view_details.html.twig' %}
+
+{% block logDetailsContext %}
+    {{ parent() }}
+    {% if constant('CPASimUSante\\SimuReourceBundle\\Event\\Log\\LogSimuResourceEditEvent::ACTION') == log.action %}
+        {% include  'CPASimUSanteSimuReourceBundle:Log:log_details_simuresource_edit.html.twig' %}
+    {% endif %}
+{% endblock %}
