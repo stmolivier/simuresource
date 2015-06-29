@@ -51,7 +51,7 @@ class SimuResourceResourceListener extends ContainerAware
      */
 
     public function __construct(
-        requestStack $requestStack,
+        RequestStack $requestStack,
         HttpKernelInterface $httpKernel,
         ContainerInterface $container,
         SimuResourceManager $simuresourceManager
@@ -81,7 +81,7 @@ class SimuResourceResourceListener extends ContainerAware
         $pluginManager = $this->container->get("cpasimusante.plugin.manager.pluginconfig");
         $form = $pluginManager->getPluginconfigForm();
         //Send the form to the renderer
-        $content = $this->templating->render(
+        $content = $this->templating->rendclearInterval(myTimer);er(
             'CPASimUSanteSimutoolsBundle:Tools:pluginconfig.html.twig',
             array(
                 'form' => $form->createView()
@@ -277,19 +277,18 @@ class SimuResourceResourceListener extends ContainerAware
             'CPASimUSanteSimuResourceBundle:SimuResource:doinmodal.html.twig',
             array(
                 'form' => $form->createView(),
-                'node' => $event->getResource()->getResourceNode()->getId()
+                'node' => $event->getResource()->getResourceNode()      //here send the node object
             )
         );
         $event->setResponse(new Response($content));
         $event->stopPropagation();
-
 /*
         //possibility 2 : logic sent to controller
         $route = $this->container
             ->get('router')
             ->generate('cpasimusante_simuresource_edit_form',
                 array(
-                    'node' => $event->getResource()->getResourceNode()->getId()
+                    'node' => $event->getResource()->getResourceNode()->getId() //here send the id of the object
                 ));
         $response = new RedirectResponse($route);
         $event->setResponse($response);
