@@ -5,6 +5,7 @@ namespace CPASimUSante\SimuResourceBundle\Event\Log;
 use Claroline\CoreBundle\Event\Log\AbstractLogResourceEvent;
 use Claroline\CoreBundle\Event\Log\LogGenericEvent;
 use Claroline\CoreBundle\Event\Log\NotifiableInterface;
+
 use CPASimUSante\SimuResourceBundle\Entity\SimuResource;
 
 /**
@@ -17,7 +18,7 @@ class LogSimuResourceEditEvent
     extends AbstractLogResourceEvent    //log associated to a resource, or
     //extends AbstractLogToolEvent      //log associated to a tool, or
     //extends AbstractLogWidgetEvent    //log associated to a widget
-    implements NotifiableInterface {
+    implements NotifiableInterface {        //mandatory for a log to be used as a notification
 
     //Constant, mandatory, to define the specific action in the log
     //name in 3 parts separated by dashes, each part may have underscore in them :
@@ -33,12 +34,12 @@ class LogSimuResourceEditEvent
     /**
      *
      */
-    public function __construct(SimuResource $simuresource, $userIds)
+    public function __construct(SimuResource $simuresource, $param, $userIds)
     {
         $this->simuresource = $simuresource;
         $this->userIds = $userIds;
         $this->details = array(
-            'simuparam1'=> 'simuparamvalue1'
+            'simuparam1'=> $param
         );
 
         parent::__construct($simuresource->getResourceNode(), $this->details);
@@ -54,13 +55,16 @@ class LogSimuResourceEditEvent
         return array(self::DISPLAYED_WORKSPACE);
         //return array(self::DISPLAYED_ADMIN); //other choice
     }
-
+/*
+ * ??
+ */
     public function getSimuResource()
     {
         return $this->simuresource;
     }
 
     /**
+     * event can notify the resource's followers
      * Get sendToFollowers boolean.
      *
      * @return boolean
@@ -71,6 +75,7 @@ class LogSimuResourceEditEvent
     }
 
     /**
+     * list of User ids that will receive the notification
      * Get includeUsers array of user ids.
      * Reports are only reported to user witch have the manager role
      * @return array
@@ -81,6 +86,8 @@ class LogSimuResourceEditEvent
     }
 
     /**
+     * list of User ids that must not receive the notification
+     * (this Users can be either in followers list or includeUsers list)
      * Get excludeUsers array of user ids.
      *
      * @return array
@@ -91,6 +98,7 @@ class LogSimuResourceEditEvent
     }
 
     /**
+     * sting with the name/key of the action performed
      * Get actionKey string.
      *
      * @return string
@@ -111,7 +119,9 @@ class LogSimuResourceEditEvent
     }
 
     /**
-     * Get details
+     * contains informations about the resource name, id and type as well as other information,
+     * necessary to render the notification text.
+     * All the information about the "doer" are added by the Notification plugin automatically
      *
      * @return array
      */

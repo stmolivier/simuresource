@@ -303,7 +303,7 @@ class SimuResourceController extends Controller
         $userIds = $this->generalManager->getUsersIdsForResourceByRights($node, 'open', false);
         //$userIds = array of user id. Here, users who can open the resource
         //create an event, and pass some parameters
-        $event = new LogSimuResourceEditEvent($resource, $userIds);
+        $event = new LogSimuResourceEditEvent($resource, 'simuparamvalue1', $userIds);
         //send the event to the event dispatcher
         $this->get('event_dispatcher')->dispatch('log', $event); //don't change it.
         //End send notification

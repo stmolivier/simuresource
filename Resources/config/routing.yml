@@ -1,4 +1,4 @@
 simuresource_controller:
-    resource: "@CPASimUSanteSimuResourceBundle/Controller/SimuResourceController.php"
+    resource: "@CPASimUSanteSimuResourceBundle/Controller/"
     type: annotation
     prefix: /

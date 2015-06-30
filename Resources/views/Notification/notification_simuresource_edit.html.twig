@@ -1,6 +1,6 @@
 {#
 path : here, open the resource (route name in controller)
-notification.actionKey : namme of the ACTION const in Event/Log/LogSimuResourceEditEvent.php
+notification.actionKey : name of the ACTION const in Event/Log/LogSimuResourceEditEvent.php
 %simuresource% and %simuparam1% : params to translate in the notification.actionKey translation
 #}
 notification_simuresource_edit.html.twig
@@ -9,4 +9,4 @@ notification_simuresource_edit.html.twig
         '%simuresource%' : notification.details.resource.name,
         '%simuparam1%' : notification.details.simuparam1|trans({ },'resource')
     }, 'notification') }}
-</a>aa
+</a>
