@@ -317,7 +317,12 @@ class SimuResourceResourceListener extends ContainerAware
     {
         $resource =  $event->getResource();
 
-        //END Send a mail to user and add a message in Claroline internal messagebox (Cloaroline/message-bundle)
+        //Add flashbag
+        $this->request->getSession()->getFlashBag()->add( 'success', 'A message in a success "flashbag"'        );
+        $this->request->getSession()->getFlashBag()->add( 'success', 'Another message in a success "flashbag"'  );
+        $this->request->getSession()->getFlashBag()->add( 'error',   'A message in an error "flashbag"'         );
+
+        //BEGIN Send a mail to user and add a message in Claroline internal messagebox (Claroline/message-bundle)
         $subject = 'Some test subject';
         $body = 'Some dummy body';
         //get users to send the mail to

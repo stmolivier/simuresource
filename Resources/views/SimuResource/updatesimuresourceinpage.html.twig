@@ -9,15 +9,30 @@
 {% block title %}{{ _resource.getResourceNode().getName() | striptags | raw }}{% endblock %}
 
 {% block section_content %}
+    {# begin flashbag display in template #}
+    {% for successMessage in app.session.flashbag.get('success') %}
+        <div class="alert alert-dismissable alert-success">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{ successMessage }}
+        </div>
+    {% endfor %}
+    {% for errorMessage in app.session.flashbag.get('error') %}
+        <div class="alert alert-dismissable alert-danger">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            {{ errorMessage }}
+        </div>
+    {% endfor %}
+    {# end flashbag display in template #}
     <div class="panel-heading">
         <h3 class="panel-title">{{ _resource.getResourceNode().getName() }}</h3>
     </div>
         <div class="panel-body">
-The resource id is {{  _resource.id }}
-from {{ from.username }}
-            <ul>{% for user in users %}
+The resource id is {{  _resource.id }}<br>
+message from {{ from.username }}
+<ul>{% for user in users %}
                     <li>{{ user.id }} ({{ user.username }}) can open this resource</li>
-                {% endfor %}</ul>
+{% endfor %}</ul>
+
         </div>
         <div class="panel-footer">
 
@@ -27,4 +42,22 @@ from {{ from.username }}
 
         </div>
 
+{% endblock %}
+{# javascript use #1 : inline #}
+{% block javascripts %}
+    {{ parent() }}
+<script type="text/javascript">
+    /*
+    $.ajax({
+        url: Routing.generate(
+                'someroute',
+                {'key': value}
+        ),
+        type: 'GET',
+        success: function (data) {
+            $('#someid').prop('selected', true);
+        }
+    });
+    */
+</script>
 {% endblock %}
