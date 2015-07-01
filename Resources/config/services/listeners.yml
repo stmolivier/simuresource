@@ -1,3 +1,4 @@
+#do not forget to add $loader->load('services/listeners.yml'); in DependencyInjection for this file
 services:
     cpasimusante.listener.simuresource.notification_listener:
         class: CPASimUSante\SimuResourceBundle\Listener\NotificationListener

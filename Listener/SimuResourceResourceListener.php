@@ -34,11 +34,20 @@ use CPASimUSante\SimuResourceBundle\Form\SimuResourceEditType;
 class SimuResourceResourceListener extends ContainerAware
 {
     /**
-     * @var
+     * @var null|Request
      */
     private $request;
+    /**
+     * @var RequestStack
+     */
     private $requestStack;
+    /**
+     * @var HttpKernelInterface
+     */
     private $httpKernel;
+    /**
+     * @var SimuResourceManager
+     */
     private $simuresourceManager;
 
     /**
@@ -307,14 +316,35 @@ class SimuResourceResourceListener extends ContainerAware
     public function onUpdatesimuresourceinpage(CustomActionResourceEvent $event)
     {
         $resource =  $event->getResource();
+
+        //END Send a mail to user and add a message in Claroline internal messagebox (Cloaroline/message-bundle)
+        $subject = 'Some test subject';
+        $body = 'Some dummy body';
+        //get users to send the mail to
+        $users = $this->container->get('cpasimusante.plugin.manager.general')->getUsersForResourceByRights($resource->getResourceNode(), 'open', false);
+        //sender
+        $from = $this->container->get('security.token_storage')->getToken()->getUser();
+
+        //Add a message in message box
+        $messageManager = $this->container->get('claroline.manager.message_manager');
+        $message = $messageManager->create($body, $subject, $users, $from);
+        $messageManager->send($message);
+
+        //Send a mail - not tested with mailserver
+        $mailer = $this->container->get('claroline.manager.mail_manager')->send($subject, $body, $users, $from);
+        //END Send a mail to user
+
         $content = $this->templating->render(
             'CPASimUSanteSimuResourceBundle:SimuResource:updatesimuresourceinpage.html.twig',
             array(
                 '_resource' => $resource,
-                'entity'    => $resource
+                'entity'    => $resource,
+                'users'     => $users,
+                'from'      => $from
             )
         );
         $response = new Response($content);
+
         $event->setResponse($response);
         $event->stopPropagation();
     }

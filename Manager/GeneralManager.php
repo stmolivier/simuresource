@@ -30,7 +30,7 @@ class GeneralManager
     }
 
     /**
-     *  Getting the user that have the $selectedright rights
+     *  Getting the users (id) that have the $selectedright rights
      *  Excluded the admin profil.
      * For a resource
      *
@@ -69,6 +69,47 @@ class GeneralManager
             }
         }
         $userIds = array_unique($userIds);
+
+        return $userIds;
+    }
+    /**
+     *  Getting the users that have the $selectedright rights
+     *  Excluded the admin profil.
+     * For a resource
+     *
+     * @return array UserIds array of user objects|array
+     */
+    public function getUsersForResourceByRights(ResourceNode $node, $selectedright='open',$excludeAdmin=true)
+    {
+//        $this->container->get('icap.manager.dropzone_voter')->isAllowToEdit($dropzone);
+
+        //getting the ressource node
+        //   $ressourceNode = $dropzone->getResourceNode();
+        // getting the rights of the ressource node
+        $rights = $node->getRights();
+
+        // will contain the user's ids.
+        $userIds = array();
+        $test = array();
+        // searching for roles with the 'open' right
+        foreach ($rights as $ressourceRight) {
+            $role = $ressourceRight->getRole(); //  current role
+            $mask = $ressourceRight->getMask(); // current mask
+
+            // getting decoded rights.
+            $decodedRights = $this->maskManager->decodeMask($mask, $node->getResourceType());
+            $checkrights = (array_key_exists($selectedright, $decodedRights) && $decodedRights[$selectedright] == true);
+            // if this role is allowed to $selectedright (and this role is not an Admin role)
+            $checkrights = ($excludeAdmin) ? $checkrights && ($role->getName() != 'ROLE_ADMIN') : $checkrights;
+
+            if ($checkrights) {
+                $users = $role->getUsers();
+                foreach ($users as $user) {
+                    array_push($userIds, $user);
+                }
+            }
+        }
+        //$users = array_unique($users);
 
         return $userIds;
     }
