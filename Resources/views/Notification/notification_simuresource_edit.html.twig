@@ -4,7 +4,7 @@ notification.actionKey : name of the ACTION const in Event/Log/LogSimuResourceEd
 %simuresource% and %simuparam1% : params to translate in the notification.actionKey translation
 #}
 notification_simuresource_edit.html.twig
-<a href="{{ path('cpasimusante_simuresource_resource_open', {'resourceId' : notification.details.resource.id}) }}" target="_blank">
+<a href="{{ path('cpasimusante_simuresource_resource_open', {'simuresourceId' : notification.details.resource.id}) }}" target="_blank">
     {{ notification.actionKey|trans({
         '%simuresource%' : notification.details.resource.name,
         '%simuparam1%' : notification.details.simuparam1|trans({ },'resource')
