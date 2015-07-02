@@ -1,0 +1,7 @@
+{% extends 'CPASimUSanteSimuResourceBundle::modal.html.twig' %}
+
+{% block title %}Some Title{% endblock %}
+
+{% block id %}{{ formid }}{% endblock %}
+
+{% block action %}{{ path('doinmodal_change', {'node': node}) }}{% endblock %}

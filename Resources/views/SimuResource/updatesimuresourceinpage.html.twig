@@ -27,12 +27,19 @@
         <h3 class="panel-title">{{ _resource.getResourceNode().getName() }}</h3>
     </div>
         <div class="panel-body">
-The resource id is {{  _resource.id }}<br>
+The resource id is {{  _resource.id }}, The resource nodeid is {{ _resource.getResourceNode().getId() }}<br>
 message from {{ from.username }}
-<ul>{% for user in users %}
-                    <li>{{ user.id }} ({{ user.username }}) can open this resource</li>
-{% endfor %}</ul>
+<select name="userid" id="userid">{% for user in users %}
+        <option value="{{ user.id }}">{{ user.id }} ({{ user.username }}) can open this resource</option>
+{% endfor %}</select>
 
+            <button id="ajax-inline" class="btn btn-primary">ajax inline call</button>
+            <div id="ajax-inline-div"></div>
+
+            <button id="ajax-infile" class="btn btn-primary">ajax in file call</button>
+            <div id="ajax-infile-div"></div>
+
+            <button id="simumodale" class="btn btn-primary">modal opener</button>
         </div>
         <div class="panel-footer">
 
@@ -43,21 +50,57 @@ message from {{ from.username }}
         </div>
 
 {% endblock %}
-{# javascript use #1 : inline #}
+
 {% block javascripts %}
     {{ parent() }}
-<script type="text/javascript">
-    /*
-    $.ajax({
-        url: Routing.generate(
-                'someroute',
-                {'key': value}
-        ),
-        type: 'GET',
-        success: function (data) {
-            $('#someid').prop('selected', true);
-        }
+    {# javascript use #1 : inline #}
+    <script type="text/javascript">
+    $("#ajax-inline").on("click", function(){
+        $.ajax({
+            url: Routing.generate(  //use of functions from friendsofsymfony/jsrouting-bundle
+                    'cpasimusante_simuresource_updatesimuresourceinpage',
+                    {'userid': $("#userid option:selected").val()}
+            ),
+            type: 'GET',
+            success: function (data) {
+                $('#ajax-inline-div').html("content from ajax-inline click : name=" + data.name + " and password= "+data.pwd);
+            },
+            error: function( jqXHR, textStatus, errorThrown){
+                $('#ajax-inline-div').html("error. textStatus="+ textStatus + " errorThrown="+ errorThrown);
+            }
+        });
     });
-    */
-</script>
+
+    //open a Claroline modal
+    $("#simumodale").on("click", function(){
+        formId = 'modalformid';     //id of modal form
+        routename = Routing.generate(   //route in controller to call the twig form file
+                'cpamodal',
+                {                                                       //custom parameters sent to the controller method
+                    'userid': $("#userid option:selected").val(),
+                    'formid': formId,
+                    'resourcenodeid': {{ _resource.getResourceNode().getId()}}
+                }
+        );
+        //@ see CoreBundle/Resources/public/js/modal.js
+        window.Claroline.Modal.displayForm(
+                routename,
+                modalsuccess,
+                formRender,
+                formId
+        );
+    });
+
+    function formRender() {   }
+
+    //When modal form is successfully sent
+    function modalsuccess(data) { console.log(data);  }
+    </script>
+
+    {#
+    javascript use #2 : in a file
+    don't forget to do a > php app/console assets:install --symlink
+    #}
+    <script type="text/javascript" src="{{ asset('bundles/cpasimusantesimuresource/js/simuresource.js') }}"></script>
+
 {% endblock %}

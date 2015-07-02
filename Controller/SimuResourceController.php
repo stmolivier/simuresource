@@ -25,6 +25,7 @@ use CPASimUSante\SimuResourceBundle\Form\SimuResourceEditType;
 //for notification Event
 use CPASimUSante\SimuResourceBundle\Event\Log\LogSimuResourceEditEvent;
 
+use Claroline\CoreBundle\Entity\User;
 
 class SimuResourceController extends Controller
 {
@@ -118,8 +119,8 @@ class SimuResourceController extends Controller
      *     "/change/{node}",
      *     name="doinmodal_change",
      *     options={"expose"=true}
-     * )doinmodal
-     *
+     * )
+     * @EXT\Method("POST")
      * @EXT\Template("CPASimUSanteSimuResourceBundle:SimuResource:doinmodal.html.twig")
      */
     public function doinmodalAction(ResourceNode $node)
@@ -127,7 +128,7 @@ class SimuResourceController extends Controller
         if (!$this->isUserGranted('edit', $node)){
             throw new AccessDeniedException();
         }
-
+        //retrieve simuresource object by resource node
         $em = $this->getDoctrine()->getManager();
         $simuresource = $em->getRepository('CPASimUSanteSimuResourceBundle:SimuResource')
             ->findOneBy(array('resourceNode' => $node->getId()));
@@ -267,7 +268,6 @@ class SimuResourceController extends Controller
         );
     }
 
-
     /**
      * @EXT\Route("/open/{simuresourceId}", name="cpasimusante_simuresource_resource_open")
      * template to be displayed
@@ -317,5 +317,101 @@ class SimuResourceController extends Controller
             'node'          => $node,
             'uids'          => $userIds     //just for testing purpose
         );
+    }
+
+    /**
+     * function called in ajax from updatesimuresourceinpage.html.twig
+     */
+    /**
+     * @EXT\Route("/updatesimuresourceinpage/{userid}", name="cpasimusante_simuresource_updatesimuresourceinpage", options={"expose"=true})
+     * @EXT\Method({"GET"})
+     *
+     * @EXT\ParamConverter("loggedUser", options={"authenticatedUser" = true})
+     */
+    public function updatesimuresourceinpageAction($userid)
+    {
+        //some dummy treatment to get some data
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('ClarolineCoreBundle:User')
+            ->findOneBy(array('id' => $userid));
+
+        //create a $data variable sent in JSON.
+        $data['name'] = $user->getFirstName(). " - ".$user->getLastName(). " : ".$user->getUsername();
+        $data['pwd'] = $user->getPassword();
+        $response = new JsonResponse($data);
+
+        return $response;
+    }
+
+    /**
+     * function called in ajax from updatesimuresourceinpage2.html.twig
+     * dont forget to use options={"expose"=true} when passing parameters in js
+     */
+    /**
+     * @EXT\Route("/updatesimuresourceinpage2/{userid}", name="cpasimusante_simuresource_updatesimuresourceinpage2", options={"expose"=true})
+     * @EXT\Method({"GET"})
+     *
+     * @EXT\ParamConverter("loggedUser", options={"authenticatedUser" = true})
+     */
+    public function updatesimuresourceinpage2Action($userid)
+    {
+        //some dummy treatment to get some data
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('ClarolineCoreBundle:User')
+            ->findOneBy(array('id' => $userid));
+
+        //create a $data variable sent in JSON.
+        $data['locale'] = $user->getLocale();
+        $data['salt'] = $user->getSalt();
+        $response = new JsonResponse($data);
+
+        return $response;
+    }
+
+    /**
+     * dont forget to use options={"expose"=true} when passing parameters in js
+     */
+    /**
+     * @EXT\Route("/updatesimuresourceinpage_modalcontent/{userid}", name="cpasimusante_simuresource_updatesimuresourceinpage_modalcontent", options={"expose"=true})
+     * @EXT\Method({"GET"})
+     *
+     * @EXT\ParamConverter("loggedUser", options={"authenticatedUser" = true})
+     */
+    public function updatesimuresourceinpagemodalcontentAction($userid)
+    {
+        //some dummy treatment to get some data
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('ClarolineCoreBundle:User')
+            ->findOneBy(array('id' => $userid));
+
+        //create a $data variable sent in JSON.
+        $data['locale'] = $user->getLocale();
+        $data['salt'] = $user->getSalt();
+        $response = new JsonResponse($data);
+
+        return $response;
+    }
+    /**
+     * dont forget to use options={"expose"=true} when passing parameters in js
+     */
+    /**
+     * Send informations to display the form in the modal
+     *
+     * @EXT\Route("/cpamodal/{userid}/form/{formid}/resource/{resourcenodeid}", name="cpamodal", options={"expose"=true})
+     * @EXT\Template("CPASimUSanteSimuResourceBundle:SimuResource:modalform.html.twig")
+     *
+     * @return array
+     */
+    public function cpamodalAction($userid, $formid, $resourcenodeid)
+    {
+        $em = $this->getDoctrine()->getManager();
+        //retrieve the resource (object)
+       // $resourceconfig = $this->simuresourceManager->getResourceConfigByNode($node->getId());
+        $simuresource = $em->getRepository('CPASimUSanteSimuResourceBundle:SimuResource')
+            ->findOneBy(array('resourceNode' => $resourcenodeid));
+
+        $form = $this->get('form.factory')->create(new SimuResourceEditType(), $simuresource);
+
+        return ['form' => $form->createView(), 'formid' => $formid, 'node' => $resourcenodeid];
     }
 }
