@@ -29,4 +29,15 @@ class CPASimUSanteSimuResourceBundle extends PluginBundle
     {
         return true;
     }
+
+    /**
+     * get the correct directory containing the fixtures to be installed
+     *
+     * @param $environment
+     * @return string
+     */
+    public function getRequiredFixturesDirectory($environment)
+    {
+        return 'DataFixtures';
+    }
 }
