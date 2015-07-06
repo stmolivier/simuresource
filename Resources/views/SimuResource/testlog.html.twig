@@ -1,0 +1,54 @@
+{% set layout = "ClarolineCoreBundle:Workspace:layout.html.twig" %}
+
+{% if isDesktop() %}
+    {% set layout = "ClarolineCoreBundle:Desktop:layout.html.twig" %}
+{% endif %}
+
+{% extends layout %}
+
+{% block section_content %}
+
+    <p>
+    <label>Resources type list</label>
+        <select name="resourcetype">
+            {% for resourcetype in resourcetypelist %}
+                <option value="{{ resourcetype.id }}">{{ resourcetype.name  | trans({}, 'resource') }}</option>
+            {% endfor %}
+        </select>
+    </p>
+
+    <p>
+        <label>User List</label>
+        <select name="user">
+            {% for user in userlist %}
+                <option value="{{ user.id }}">{{ user.lastName }} {{ user.firstName }}</option>
+            {% endfor %}
+        </select>
+    </p>
+
+    <p>
+        <label>Group list</label>
+        <select name="group">
+            {% for group in grouplist %}
+                <option value="{{ group.id }}">{{ group.name }}</option>
+            {% endfor %}
+        </select>
+    </p>
+
+    <p>
+        <label>List of ressources for activity</label>
+        <ul>
+            {% for activity in activitylist %}
+                <li><u>{{ activity.title }} (id:{{ activity.id }}, nodeid:{{ activity.resourceNode.id }})</u><br>
+                    - primaryResource: {{ activity.primaryResource.name }} (nodeid:{{ activity.primaryResource.id }})<br>
+                    - secondaryResources : {% for secres in activity.parameters.secondaryResources %}
+                    <ul>
+                        <li>{{ secres.name }} (nodeid: {{ secres.id }})</li>
+                    </ul>
+                    {% endfor %}
+                </li>
+            {% endfor %}
+        </ul>
+    </p>
+
+{% endblock %}

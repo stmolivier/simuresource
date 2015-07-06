@@ -153,6 +153,58 @@ class SimuResourceController extends Controller
     }
 
     /**
+     * Controller method for testlog listener
+     */
+    /**
+     * @EXT\Route(
+     *     "/testlog/{node}",
+     *     name="cpasimusante_simuresource_testlog",
+     *     options={"expose"=true}
+     * )
+     * @EXT\Template("CPASimUSanteSimuResourceBundle:SimuResource:testlog.html.twig")
+     */
+    public function testlogAction(ResourceNode $node)
+    {
+        //retrieve simuresource object by resource node
+        $em = $this->getDoctrine()->getManager();
+        $resource = $em->getRepository('CPASimUSanteSimuResourceBundle:SimuResource')
+            ->findOneBy(array('resourceNode' => $node->getId()));
+
+   /*     //retrieve the id of current workspace
+        $wsid = $resource->getResourceNode()->getWorkspace()->getId();
+        //retrieve the current workspace object
+        $workspacemanager = $this->container->get('claroline.manager.workspace_manager');
+        $workspace = $workspacemanager->getWorkspaceById($wsid);
+*/
+        $workspace = $resource->getResourceNode()->getWorkspace();
+
+        //Ressource list
+        $resourcemanager = $this->container->get('claroline.manager.resource_manager');
+        $resourcetypelist = $resourcemanager->getAllResourceTypes();
+
+        //User Group list
+        $groupmanager = $this->container->get('claroline.manager.group_manager');
+        $grouplist = $groupmanager->getAllGroups(1, 50);
+
+        //User list
+        $usermanager = $this->container->get('claroline.manager.user_manager');
+        $userlist = $usermanager->getAllUsers(1, 20, 'lastName', 'ASC');
+
+        //Activity list
+//        $act = $resourcemanager->getResourceTypeByName('activity');
+
+        $activitymanager = $this->container->get('claroline.manager.activity_manager');
+        $activitylist = $activitymanager->getActivityByWorkspace($workspace);
+
+        return array(
+            '_resource' => $resource,       //to display the breadcrumb !
+            'resourcetypelist' => $resourcetypelist,
+            'userlist' => $userlist,
+            'grouplist' => $grouplist,
+            'activitylist' => $activitylist,
+        );
+    }
+    /**
      * Called on onConfigure Listener method for form POST
      * @param WidgetInstance $widgetInstance
      * @return array    AJAX response

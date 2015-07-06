@@ -258,7 +258,7 @@ class SimuResourceResourceListener extends ContainerAware
         $content = $this->templating->render(
             'CPASimUSanteSimuResourceBundle:SimuResource:dostuff.html.twig',
             array(
-                '_resource' => $event->getResource()    //needed to get context and display the breadcrumb
+                'node' => $event->getResource()    //needed to get context and display the breadcrumb
             )
         );
         $response = new Response($content);
@@ -324,7 +324,7 @@ class SimuResourceResourceListener extends ContainerAware
         $users = $this->container->get('cpasimusante.plugin.manager.general')->getUsersForResourceByRights($resource->getResourceNode(), 'open', false);
         //sender
         $from = $this->container->get('security.token_storage')->getToken()->getUser();
-/*
+
         //Add a message in message box
         $messageManager = $this->container->get('claroline.manager.message_manager');
         $message = $messageManager->create($body, $subject, $users, $from);
@@ -338,7 +338,7 @@ class SimuResourceResourceListener extends ContainerAware
         $this->request->getSession()->getFlashBag()->add( 'success', 'A message in a success "flashbag"'        );
         $this->request->getSession()->getFlashBag()->add( 'success', 'Another message in a success "flashbag"'  );
         $this->request->getSession()->getFlashBag()->add( 'error',   'A message in an error "flashbag"'         );
-*/
+
         $content = $this->templating->render(
             'CPASimUSanteSimuResourceBundle:SimuResource:updatesimuresourceinpage.html.twig',
             array(
@@ -350,6 +350,28 @@ class SimuResourceResourceListener extends ContainerAware
         );
         $response = new Response($content);
 
+        $event->setResponse($response);
+        $event->stopPropagation();
+    }
+
+    /**
+     * page to test log (display, filter ...)
+     */
+    /**
+     * @DI\Observe("testlog_cpasimusante_simuresource")
+     *
+     * @param CustomActionResourceEvent $event
+     */
+    public function onTestlog(CustomActionResourceEvent $event)
+    {
+        //send the logic to the controller method
+        $route = $this->container
+                ->get('router')
+                ->generate('cpasimusante_simuresource_testlog',
+                    array(
+                        'node' => $event->getResource()->getResourceNode()->getId()
+                    ));
+        $response = new RedirectResponse($route);
         $event->setResponse($response);
         $event->stopPropagation();
     }

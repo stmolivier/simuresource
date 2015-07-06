@@ -18,9 +18,9 @@ class LogSimuResourceEditEvent
     extends AbstractLogResourceEvent    //log associated to a resource, or
     //extends AbstractLogToolEvent      //log associated to a tool, or
     //extends AbstractLogWidgetEvent    //log associated to a widget
-    implements NotifiableInterface {        //mandatory for a log to be used as a notification
+    implements NotifiableInterface {    //mandatory for a log to be used as a notification
 
-    //Constant, mandatory, to define the specific action in the log
+    //Constant, mandatory, to define the specific action in the log (in claro_log table)
     //name in 3 parts separated by dashes, each part may have underscore in them :
     // - type of object it's associated to (resource, platform, workspace, user, role, tools, widget..)
     // - type of the resource (optional)    here, cpasimusante_simuresource => name in config.yml

@@ -5,6 +5,7 @@ cpasimusante_simuresource_plugin_updated: "Plugin mis à jour"
 dostuff: "Faire un truc"
 doinmodal: "Faire un truc dans une modale"
 updatesimuresourceinpage: "Mettre à jour dans une page"
+testlog: "Faire des test sur les logs"
 
 #Entity fields
 field: "Champ"

@@ -12,6 +12,8 @@ plugin:
                 menu_name: dostuff
               - name: doinmodal
                 menu_name: doinmodal
-                is_form: true
+                is_form: true                                           #mandatory to have a modal
               - name: updatesimuresourceinpage
                 menu_name: updatesimuresourceinpage
+              - name: testlog
+                menu_name: testlog

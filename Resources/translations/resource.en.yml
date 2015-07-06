@@ -5,6 +5,7 @@ cpasimusante_simuresource_plugin_updated: "Plugin updated"
 dostuff: "Do Stuff"
 doinmodal: "Do in modal"
 updatesimuresourceinpage: "Update SimuResource in page"
+testlog: "Do tests on logs"
 
 #Entity fields
 field: "Field"
