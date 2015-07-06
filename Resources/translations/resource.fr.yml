@@ -6,6 +6,7 @@ dostuff: "Faire un truc"
 doinmodal: "Faire un truc dans une modale"
 updatesimuresourceinpage: "Mettre à jour dans une page"
 testlog: "Faire des test sur les logs"
+testupload: "Ajouter un fichier à cette ressource"
 
 #Entity fields
 field: "Champ"

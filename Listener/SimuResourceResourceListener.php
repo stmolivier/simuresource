@@ -375,4 +375,26 @@ class SimuResourceResourceListener extends ContainerAware
         $event->setResponse($response);
         $event->stopPropagation();
     }
+
+    /**
+     * page to test file upload
+     */
+    /**
+     * @DI\Observe("testupload_cpasimusante_simuresource")
+     *
+     * @param CustomActionResourceEvent $event
+     */
+    public function onTestupload(CustomActionResourceEvent $event)
+    {
+        //send the logic to the controller method
+        $route = $this->container
+            ->get('router')
+            ->generate('cpasimusante_simuresource_testupload',
+                array(
+                    'node' => $event->getResource()->getResourceNode()->getId()
+                ));
+        $response = new RedirectResponse($route);
+        $event->setResponse($response);
+        $event->stopPropagation();
+    }
 }

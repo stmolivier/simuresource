@@ -6,6 +6,7 @@ dostuff: "Do Stuff"
 doinmodal: "Do in modal"
 updatesimuresourceinpage: "Update SimuResource in page"
 testlog: "Do tests on logs"
+testupload: "Upload a file for this resource"
 
 #Entity fields
 field: "Field"

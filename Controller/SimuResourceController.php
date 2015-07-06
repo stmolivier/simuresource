@@ -191,8 +191,6 @@ class SimuResourceController extends Controller
         $userlist = $usermanager->getAllUsers(1, 20, 'lastName', 'ASC');
 
         //Activity list
-//        $act = $resourcemanager->getResourceTypeByName('activity');
-
         $activitymanager = $this->container->get('claroline.manager.activity_manager');
         $activitylist = $activitymanager->getActivityByWorkspace($workspace);
 
@@ -204,6 +202,26 @@ class SimuResourceController extends Controller
             'activitylist' => $activitylist,
         );
     }
+
+    /**
+     * Controller method for testlog listener
+     */
+    /**
+     * @EXT\Route(
+     *     "/testupload/{node}",
+     *     name="cpasimusante_simuresource_testupload",
+     *     options={"expose"=true}
+     * )
+     * @EXT\Template("CPASimUSanteSimuResourceBundle:SimuResource:testupload.html.twig")
+     */
+    public function testuploadAction(ResourceNode $node)
+    {
+
+        return array(
+
+        );
+    }
+
     /**
      * Called on onConfigure Listener method for form POST
      * @param WidgetInstance $widgetInstance

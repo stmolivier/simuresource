@@ -17,3 +17,5 @@ plugin:
                 menu_name: updatesimuresourceinpage
               - name: testlog
                 menu_name: testlog
+              - name: testupload
+                menu_name: testupload
