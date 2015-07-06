@@ -165,7 +165,7 @@ class SimuResourceController extends Controller
      */
     public function testlogAction(ResourceNode $node)
     {
-        //retrieve simuresource object by resource node
+        //retrieve resource object by resource node
         $em = $this->getDoctrine()->getManager();
         $resource = $em->getRepository('CPASimUSanteSimuResourceBundle:SimuResource')
             ->findOneBy(array('resourceNode' => $node->getId()));
@@ -204,7 +204,7 @@ class SimuResourceController extends Controller
     }
 
     /**
-     * Controller method for testlog listener
+     * Controller method for testupload listener
      */
     /**
      * @EXT\Route(
@@ -216,9 +216,13 @@ class SimuResourceController extends Controller
      */
     public function testuploadAction(ResourceNode $node)
     {
+        //retrieve resource object by resource node
+        $em = $this->getDoctrine()->getManager();
+        $resource = $em->getRepository('CPASimUSanteSimuResourceBundle:SimuResource')
+            ->findOneBy(array('resourceNode' => $node->getId()));
 
         return array(
-
+            '_resource' => $resource,       //to display the breadcrumb !
         );
     }
 

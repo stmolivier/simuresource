@@ -1,7 +1,7 @@
 cpasimusante_simuresource: SimuResource
 cpasimusante_simuresource_plugin_updated: "Plugin updated"
 
-#custom listener methods
+#custom listener methods name in config.yml
 dostuff: "Do Stuff"
 doinmodal: "Do in modal"
 updatesimuresourceinpage: "Update SimuResource in page"
