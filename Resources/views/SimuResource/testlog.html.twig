@@ -51,4 +51,56 @@
         </ul>
     </p>
 
+    <p>
+        <label>List of log infos</label>
+
+        <div class='logs-list'>
+            <div class="row">
+            <div class="col-md-2 log_list_item_head">
+                {{'log id'}}
+            </div>
+            <div class="col-md-2 log_list_item_head">
+                {{'date'}}
+            </div>
+            <div class="col-md-2 log_list_item_head">
+                {{'action'}}
+            </div>
+            <div class="col-md-3 log_list_item_head">
+                {{'resourceNode'}}
+            </div>
+        </div>
+
+        {% for log in logusersummarylist.pager.currentPageResults %}
+        <div class="row">
+            <div class="col-md-2 log_list_item">{{ log.getId }}</div>
+            <div class="col-md-2 log_list_item">{{ log.getDateLog()|date('date_format') }}</div>
+            <div class="col-md-2 log_list_item">{{ log.getAction() }}</div>
+            <div class="col-md-3 log_list_item">
+            {% if log.details.resource is defined%}
+                {% if log.resourceNode != null %}
+                   nodeid= {{ log.resourceNode.id }}<br>
+                    wsid = {{ log.workspace.id }}<br>
+                    resourcetypeId = {{ log.resourceType.id }}<br>
+                    resourcetypeName = {{ log.resourceType.name }}<br>
+                {% endif %}
+                resource path = {{ log.details.resource.path }}<br>
+                doerIP = {{ log.doerip }}<br>
+                doerType = {{ log.doertype }}<br>
+                doerSessionId = {{ log.doersessionid }}<br>
+            {% endif %}
+            </div>
+
+          {# {{ logusersummarylist.listItemView|raw }} #}
+            {% if logusersummarylist.listItemViews[log.getId()] is defined %}
+                {# {% include 'ClarolineCoreBundle:Log:view_list_item.html.twig' with {'isDesktop': isDesktop, 'listItemView': listItemViews[log.getId()]} %} #}
+            {% else %}
+                {# {% include 'ClarolineCoreBundle:Log:view_list_item.html.twig' with {'isDesktop': isDesktop} %} #}
+            {% endif %}
+
+        </div>
+        {% endfor %}
+{##}
+        </div>
+
+    </p>
 {% endblock %}

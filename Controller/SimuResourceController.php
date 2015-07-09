@@ -15,6 +15,8 @@ use Symfony\Component\Form\FormFactory; //for doinmodal()
 use Claroline\CoreBundle\Library\Resource\ResourceCollection;
 use Claroline\CoreBundle\Entity\Resource\ResourceNode;
 
+use Claroline\CoreBundle\Event\Log\LogGenericEvent; //for testlogAction()
+
 use CPASimUSante\SimuResourceBundle\Controller\Controller;
 use CPASimUSante\SimuResourceBundle\Manager\SimuResourceManager;
 use CPASimUSante\SimuResourceBundle\Manager\GeneralManager;
@@ -194,12 +196,43 @@ class SimuResourceController extends Controller
         $activitymanager = $this->container->get('claroline.manager.activity_manager');
         $activitylist = $activitymanager->getActivityByWorkspace($workspace);
 
+        $eventManager = $this->container->get('claroline.event.manager');
+        $eventlist = $eventManager->getSortedEventsForFilter(LogGenericEvent::DISPLAYED_ADMIN);
+
+        //get logs of resources for a user
+        $logmanager = $this->container->get("claroline.log.manager");
+        //params to pass to the logManager function
+        $page = 1;                                                          //page (variable if pager)
+        $actionsRestriction = 'workspace';                                  //'admin', 'workspace' or null
+        /*
+         * get the filter corresponding to the action :
+         * - resourceLogFilter or workspaceLogFilter if workspace
+         * - adminLogFilter if admin
+         */
+        $logFilterFormType = $this->container->get('claroline.form.resourceLogFilter');
+        $workspaceIds = array($workspace->getId());                         //array of workspace ID to look for
+        $maxResult = -1;                                                    //how many results (-1 = all)
+        $resourceNodeIds = array($resource->getResourceNode()->getId());    //array of resource node id to search for
+        $resourceClass = get_class($resource);                              //class of Resource (if resource is searched)
+
+        $logusersummarylist = $logmanager->getList(
+            $page,
+            $actionsRestriction,
+            $logFilterFormType,
+            $workspaceIds,
+            $maxResult,
+            $resourceNodeIds,
+            $resourceClass
+        );
+
         return array(
-            '_resource' => $resource,       //to display the breadcrumb !
-            'resourcetypelist' => $resourcetypelist,
-            'userlist' => $userlist,
-            'grouplist' => $grouplist,
-            'activitylist' => $activitylist,
+            '_resource'             => $resource,           //to display the breadcrumb !
+            'resourcetypelist'      => $resourcetypelist,
+            'userlist'              => $userlist,
+            'grouplist'             => $grouplist,
+            'activitylist'          => $activitylist,
+            'eventlist'             => $eventlist,
+            'logusersummarylist'    => $logusersummarylist
         );
     }
 
