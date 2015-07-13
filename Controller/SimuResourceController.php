@@ -212,7 +212,16 @@ class SimuResourceController extends Controller
         $logFilterFormType = $this->container->get('claroline.form.resourceLogFilter');
         $workspaceIds = array($workspace->getId());                         //array of workspace ID to look for
         $maxResult = -1;                                                    //how many results (-1 = all)
-        $resourceNodeIds = array($resource->getResourceNode()->getId());    //array of resource node id to search for
+/*
+ * array of resource node id to search for
+ */
+//        $resourceNodeIds = array($resource->getResourceNode()->getId());
+        $resourceNodeIds = $em->getRepository('ClarolineCoreBundle:Resource\ResourceNode')
+            ->findByWorkspace($workspace->getId());
+
+        //get all resource from workspace (as object and not id)
+        //$resourceNode = $resourcemanager->getByWorkspace($workspace);
+
         $resourceClass = get_class($resource);                              //class of Resource (if resource is searched)
 
         $logusersummarylist = $logmanager->getList(
@@ -225,6 +234,28 @@ class SimuResourceController extends Controller
             $resourceClass
         );
 
+        //get all results for a given resource type (ex : exercise)
+        $resourceType = array(22);
+       /* $customRepo = $this->container->get('cpasimusante.repository.resource');
+        $resourceNodeIds = $customRepo->findByTypeAndWorkspace($workspace, $resourceType);
+        */
+//        $queryBuilder = $this->_em->createQuery('SELECT r FROM ClarolineCoreBundle:Resource\ResourceNode r');
+        /*$resourceNodeIds = $em->getRepository('ClarolineCoreBundle:Resource\ResourceNode')
+            ->findIdByTypeAndWorkspace2($workspace, $resourceType);
+        */
+      /*  $resourceNodeIds = $this->container->get('cpasimusante.repository.resource')
+            ->findIdByTypeAndWorkspace($workspace, $resourceType);
+//die($resourceNodeIds);
+        $logusersummarylistforresource = $logmanager->getList(
+            $page,
+            $actionsRestriction,
+            $logFilterFormType,
+            $workspaceIds,
+            $maxResult,
+            $resourceNodeIds,
+            $resourceClass
+        );*/
+
         return array(
             '_resource'             => $resource,           //to display the breadcrumb !
             'resourcetypelist'      => $resourcetypelist,
@@ -232,7 +263,8 @@ class SimuResourceController extends Controller
             'grouplist'             => $grouplist,
             'activitylist'          => $activitylist,
             'eventlist'             => $eventlist,
-            'logusersummarylist'    => $logusersummarylist
+            'logusersummarylist'    => $logusersummarylist,
+           // 'logusersummarylistforresource' => $logusersummarylistforresource
         );
     }
 
@@ -397,7 +429,7 @@ class SimuResourceController extends Controller
         } else {
             $uid = 'anonymous';
         }
-        $node = $resource->getResourceNode();
+        $node = $resource->getResourceNode(); // getResourceNode() is in CoreBundle/Entity/Resource/AbstractResource
         //retrieve the WS
         $workspace = $node->getWorkspace();
 
