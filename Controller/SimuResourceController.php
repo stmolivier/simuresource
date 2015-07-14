@@ -209,15 +209,14 @@ class SimuResourceController extends Controller
          * - resourceLogFilter or workspaceLogFilter if workspace
          * - adminLogFilter if admin
          */
-        $logFilterFormType = $this->container->get('claroline.form.resourceLogFilter');
+        $logFilterFormType = $this->container->get('claroline.form.workspaceLogFilter');
         $workspaceIds = array($workspace->getId());                         //array of workspace ID to look for
         $maxResult = -1;                                                    //how many results (-1 = all)
 /*
  * array of resource node id to search for
  */
 //        $resourceNodeIds = array($resource->getResourceNode()->getId());
-        $resourceNodeIds = $em->getRepository('ClarolineCoreBundle:Resource\ResourceNode')
-            ->findByWorkspace($workspace->getId());
+        $resourceNodeIds = $em->getRepository('ClarolineCoreBundle:Resource\ResourceNode')->findByWorkspace($workspace->getId());
 
         //get all resource from workspace (as object and not id)
         //$resourceNode = $resourcemanager->getByWorkspace($workspace);
@@ -234,27 +233,11 @@ class SimuResourceController extends Controller
             $resourceClass
         );
 
-        //get all results for a given resource type (ex : exercise)
-        $resourceType = array(22);
-       /* $customRepo = $this->container->get('cpasimusante.repository.resource');
-        $resourceNodeIds = $customRepo->findByTypeAndWorkspace($workspace, $resourceType);
-        */
-//        $queryBuilder = $this->_em->createQuery('SELECT r FROM ClarolineCoreBundle:Resource\ResourceNode r');
-        /*$resourceNodeIds = $em->getRepository('ClarolineCoreBundle:Resource\ResourceNode')
-            ->findIdByTypeAndWorkspace2($workspace, $resourceType);
-        */
-      /*  $resourceNodeIds = $this->container->get('cpasimusante.repository.resource')
-            ->findIdByTypeAndWorkspace($workspace, $resourceType);
-//die($resourceNodeIds);
-        $logusersummarylistforresource = $logmanager->getList(
-            $page,
-            $actionsRestriction,
-            $logFilterFormType,
-            $workspaceIds,
-            $maxResult,
-            $resourceNodeIds,
-            $resourceClass
-        );*/
+        //get all data (log/results) for a given resource type (ex : exercise)
+        $resourceType = array($resourcemanager->getResourceTypeByName('ujm_exercise')->getId());
+        //use of override of the Core Log Repository
+        $logcustom = $em->getRepository('ClarolineCoreBundle:Log\Log')
+            ->findByResourceType($resourceType);//, array('resource-ujm_exercise-exercise_evaluated'));
 
         return array(
             '_resource'             => $resource,           //to display the breadcrumb !
@@ -264,7 +247,7 @@ class SimuResourceController extends Controller
             'activitylist'          => $activitylist,
             'eventlist'             => $eventlist,
             'logusersummarylist'    => $logusersummarylist,
-           // 'logusersummarylistforresource' => $logusersummarylistforresource
+            'logcustom'             => $logcustom
         );
     }
 

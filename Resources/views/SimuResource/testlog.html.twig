@@ -38,16 +38,21 @@
     <p>
         <label>List of ressources for activity</label>
         <ul>
+
             {% for activity in activitylist %}
                 <li><u>{{ activity.title }} (id:{{ activity.id }}, nodeid:{{ activity.resourceNode.id }})</u><br>
+                    {% if activity.primaryResource != null %}
                     - primaryResource: {{ activity.primaryResource.name }} (nodeid:{{ activity.primaryResource.id }})<br>
-                    - secondaryResources : {% for secres in activity.parameters.secondaryResources %}
-                    <ul>
-                        <li>{{ secres.name }} (nodeid: {{ secres.id }})</li>
-                    </ul>
-                    {% endfor %}
+                    - secondaryResources :
+                        {% for secres in activity.parameters.secondaryResources %}
+                        <ul>
+                            <li>{{ secres.name }} (nodeid: {{ secres.id }})</li>
+                        </ul>
+                        {% endfor %}
+                    {% endif %}
                 </li>
             {% endfor %}
+
         </ul>
     </p>
 
@@ -91,21 +96,19 @@
             {% endif %}
             </div>
 
-          {# {{ logusersummarylist.listItemView|raw }} #}
-            {% if logusersummarylist.listItemViews[log.getId()] is defined %}
-                {# {% include 'ClarolineCoreBundle:Log:view_list_item.html.twig' with {'isDesktop': isDesktop, 'listItemView': listItemViews[log.getId()]} %} #}
-            {% else %}
-                {# {% include 'ClarolineCoreBundle:Log:view_list_item.html.twig' with {'isDesktop': isDesktop} %} #}
-            {% endif %}
 
         </div>
         {% endfor %}
+
         </div>
     </p>
-        {#
-    {% for log in logusersummarylistforresource.pager.currentPageResults %}
-        ({{ log.resourceNode }})<br>
-    {% endfor %}
-#}
+
+        {# display of custom log search #}
+            {% for log in logcustom %}
+                {{ log.id }}
+                ({{ log.action }})
+                {{ log.doer.id }}<br>
+            {% endfor %}
+        {#       #}
     </div>
 {% endblock %}
