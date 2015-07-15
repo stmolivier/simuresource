@@ -233,12 +233,16 @@ class SimuResourceController extends Controller
             $resourceClass
         );
 
+        $resourcetypename = 'claroline_forum';
         //get all data (log/results) for a given resource type (ex : exercise)
-        $resourceType = array($resourcemanager->getResourceTypeByName('ujm_exercise')->getId());
+        $resourceType = array($resourcemanager->getResourceTypeByName($resourcetypename)->getId());
         //use of override of the Core Log Repository
+        /*
         $logcustom = $em->getRepository('ClarolineCoreBundle:Log\Log')
             ->findByResourceType($resourceType);//, array('resource-ujm_exercise-exercise_evaluated'));
-
+*/
+        $logcustom = $em->getRepository('CPASimUSanteSimuResourceBundle:Log\Log')
+            ->getResourceType($resourceType);//, array('resource-ujm_exercise-exercise_evaluated'));
         return array(
             '_resource'             => $resource,           //to display the breadcrumb !
             'resourcetypelist'      => $resourcetypelist,
@@ -247,7 +251,8 @@ class SimuResourceController extends Controller
             'activitylist'          => $activitylist,
             'eventlist'             => $eventlist,
             'logusersummarylist'    => $logusersummarylist,
-            'logcustom'             => $logcustom
+            'logcustom'             => $logcustom,
+            'resourcetypename'      => $resourcetypename
         );
     }
 

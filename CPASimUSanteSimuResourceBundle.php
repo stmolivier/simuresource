@@ -40,4 +40,9 @@ class CPASimUSanteSimuResourceBundle extends PluginBundle
     {
         return 'DataFixtures';
     }
+
+    public function getParent()
+    {
+        return 'ClarolineCoreBundle';
+    }
 }

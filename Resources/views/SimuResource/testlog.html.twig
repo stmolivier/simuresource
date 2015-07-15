@@ -107,6 +107,18 @@
             {% for log in logcustom %}
                 {{ log.id }}
                 ({{ log.action }})
+                {{ log.details.resource.path }} -  {{ log.details.workspace.name }}
+                {% if resourcetypename == 'ujm_exercise' and log.action == 'resource-ujm_exercise-exercise_evaluated' %}
+                    exercise{{ log.details.exercise.id }}:{{ log.details.exercise.name }},{{ log.details.exercise.title }}, result{{ log.details.result }},resultMax: {{ log.details.resultMax }},
+                {% elseif resourcetypename == 'claroline_forum' %}
+                    Resource{{ log.details.resource.name }},
+                    {% if log.details.message is defined %}
+                        Message{{ log.details.message.id }},
+                        subject{{ log.details.subject.id }},
+                        category{{ log.details.category.id }},
+                        forum{{ log.details.forum.id }}
+                    {% endif %}
+                {% endif %}
                 {{ log.doer.id }}<br>
             {% endfor %}
         {#       #}
