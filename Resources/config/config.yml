@@ -19,6 +19,6 @@ plugin:
                 menu_name: testlog
               - name: testupload
                 menu_name: testupload
-          activity_rules:
+          activity_rules:                                               #to be added in claro_activity_rule_action 
               - action: resource-read
               - action: resource-cpasimusante_simuresource-simuresource_edit
