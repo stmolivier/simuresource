@@ -19,3 +19,6 @@ plugin:
                 menu_name: testlog
               - name: testupload
                 menu_name: testupload
+          activity_rules:
+              - action: resource-read
+              - action: resource-cpasimusante_simuresource-simuresource_edit
